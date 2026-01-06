@@ -233,7 +233,7 @@
             <button class="dummy">sin</button>
             <button class="dummy">cos</button>
             <button class="dummy">tan</button>
-            <button class="dummy">π</button>
+            <button id="btn-pi" class="black">π</button>
 
             <!-- Row 4: Numbers 7-8-9, divide, dummy -->
             <button id="btn-7" class="white">7</button>
@@ -430,6 +430,9 @@
                 case 'down':
                     handleArrow(key);
                     break;
+                case 'pi':
+                    inputPi();
+                    break;
             }
             
             updateDisplay();
@@ -606,6 +609,19 @@
             if (state.lastResult === null && state.currentInput && state.currentInput !== '0') {
                 state.lastResult = parseFloat(state.currentInput);
                 state.currentInput = '';
+            }
+        }
+
+        function inputPi() {
+            if (state.enteringFraction) {
+                if (state.fractionPart === 'numerator') {
+                    state.fractionNumerator = Math.PI.toString();
+                } else {
+                    state.fractionDenominator = Math.PI.toString();
+                }
+            } else {
+                state.currentInput = Math.PI.toString();
+                state.lastResult = null;
             }
         }
 
