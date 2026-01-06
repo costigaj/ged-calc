@@ -172,6 +172,12 @@
             transform: translateY(2px) scale(0.98);
         }
 
+        /* Flash effect for button press */
+        button.flash {
+            background: #ffff00 !important;
+            color: #000 !important;
+        }
+
         .footer {
             margin-top: 15px;
             text-align: center;
@@ -256,6 +262,15 @@
                 if (window.navigator.vibrate) {
                     window.navigator.vibrate(15);
                 }
+            }
+            
+            // Flash the button that was pressed
+            const btn = event.currentTarget;
+            if (btn) {
+                btn.classList.add('flash');
+                setTimeout(() => {
+                    btn.classList.remove('flash');
+                }, 100); // 0.1 seconds
             }
         }
 
