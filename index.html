@@ -240,7 +240,7 @@
             <button id="btn-8" class="white">8</button>
             <button id="btn-9" class="white">9</button>
             <button id="btn-div" class="blue">÷</button>
-            <button class="dummy">%</button>
+            <button id="btn-percent" class="black">%</button>
 
             <!-- Row 5: Numbers 4-5-6, multiply, arrow -->
             <button id="btn-4" class="white">4</button>
@@ -433,6 +433,9 @@
                 case 'pi':
                     inputPi();
                     break;
+                case 'percent':
+                    applyPercent();
+                    break;
             }
             
             updateDisplay();
@@ -623,6 +626,24 @@
                 state.currentInput = Math.PI.toString();
                 state.lastResult = null;
             }
+        }
+
+        function applyPercent() {
+            if (state.enteringFraction) {
+                finishFraction();
+            }
+            
+            let value;
+            if (state.lastResult !== null) {
+                value = state.lastResult;
+            } else {
+                value = parseFloat(state.currentInput) || 0;
+            }
+            
+            // Divide by 100 to convert to percent
+            state.lastResult = value / 100;
+            state.currentInput = '';
+            state.expression = '';
         }
 
         // ===== BUTTON HIGHLIGHTING =====
