@@ -1,102 +1,290 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>TI-30XS Remote</title>
+    
     <script src="https://cdn.ably.com/lib/ably.min-1.js"></script>
+    
     <style>
-        * { box-sizing: border-box; touch-action: manipulation; }
-        body { 
-            font-family: -apple-system, sans-serif; 
-            background: #000; color: white; 
-            margin: 0; padding: 10px; 
-            height: 100vh; display: flex; justify-content: center; align-items: flex-start;
-            overflow: hidden; 
+        :root {
+            /* TI-30XS Button Colors */
+            --btn-black: #2a2a2a;
+            --btn-blue: #1a5fb4;
+            --btn-white: #e8e8e8;
+            --btn-green: #2e7d32;
+            --btn-gray: #4a4a4a;
+            --btn-orange: #e65100;
+            
+            --highlight: #ffff00;
         }
-        .remote-container {
-            width: 100%;
-            max-width: 380px;
-        }
-        
-        .grid { 
-            display: grid; 
-            grid-template-columns: repeat(4, 1fr); 
-            gap: 6px; 
-        }
-        
-        button { 
-            height: 52px; 
-            border-radius: 6px; border: none; 
-            background: #222; color: white; 
-            font-size: 16px; font-weight: 600;
-            display: flex; align-items: center; justify-content: center;
+
+        * {
+            box-sizing: border-box;
+            touch-action: manipulation;
             -webkit-tap-highlight-color: transparent;
         }
-        
-        button:active { background: #444; transform: scale(0.95); }
-        
-        /* TI Color Coding */
-        .green-key { background: #2e7d32; color: #fff; } /* 2nd */
-        .special { background: #1a237e; color: #fff; } /* Function keys */
-        .nav-key { background: #424242; color: #fff; border: 1px solid #555; } /* Arrows */
-        .op { background: #333; color: #ffa726; border: 1px solid #444; }
-        .clear-btn { background: #b71c1c; grid-column: span 2; }
-        .enter-btn { background: #1b5e20; grid-column: span 2; }
 
-        h3 { font-size: 11px; text-align: center; color: #666; margin: 5px 0 10px 0; text-transform: uppercase; letter-spacing: 1px; }
-        .spacer { height: 52px; pointer-events: none; visibility: hidden; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            margin: 0;
+            padding: 10px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .header h1 {
+            font-size: 14px;
+            margin: 0;
+            color: #888;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .status {
+            font-size: 11px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .status .dot {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #666;
+            margin-right: 4px;
+        }
+
+        .status.connected .dot {
+            background: #4caf50;
+            box-shadow: 0 0 4px #4caf50;
+        }
+
+        .remote-container {
+            width: 100%;
+            max-width: 360px;
+        }
+
+        .keypad {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+        }
+
+        button {
+            height: 52px;
+            border-radius: 8px;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        /* Dummy buttons */
+        button.dummy {
+            background: var(--btn-gray);
+            color: #888;
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        /* Live button styles */
+        button.black {
+            background: linear-gradient(180deg, #3a3a3a, var(--btn-black));
+            color: #fff;
+            box-shadow: 0 3px 0 #1a1a1a, 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        button.blue {
+            background: linear-gradient(180deg, #2a6fc4, var(--btn-blue));
+            color: #fff;
+            box-shadow: 0 3px 0 #0d3d7a, 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        button.white {
+            background: linear-gradient(180deg, #f5f5f5, var(--btn-white));
+            color: #1a1a1a;
+            box-shadow: 0 3px 0 #aaa, 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        button.green {
+            background: linear-gradient(180deg, #3e9d42, var(--btn-green));
+            color: #fff;
+            box-shadow: 0 3px 0 #1b5e20, 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        /* 2nd function labels */
+        button .second-fn {
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 9px;
+            color: #f4d03f;
+            font-weight: normal;
+            white-space: nowrap;
+        }
+
+        /* Section labels */
+        .section-label {
+            grid-column: span 5;
+            font-size: 10px;
+            color: #555;
+            text-align: center;
+            margin: 8px 0 2px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Special buttons */
+        button.enter-btn {
+            background: linear-gradient(180deg, #3e9d42, var(--btn-green));
+            color: #fff;
+            box-shadow: 0 3px 0 #1b5e20, 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        button.clear-btn {
+            background: linear-gradient(180deg, #c0392b, #a93226);
+            color: #fff;
+            box-shadow: 0 3px 0 #7b241c, 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        /* Press feedback */
+        button:active:not(.dummy) {
+            box-shadow: 0 1px 0 #111, 0 2px 4px rgba(0,0,0,0.2);
+            transform: translateY(2px) scale(0.98);
+        }
+
+        .footer {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 10px;
+            color: #444;
+        }
     </style>
 </head>
 <body>
-    <div class="remote-container">
-        <h3>TI-30XS Remote Controller</h3>
-        <div class="grid">
-            <button class="nav-key" onclick="send('left')">◀</button>
-            <button class="nav-key" onclick="send('up')">▲</button>
-            <button class="nav-key" onclick="send('down')">▼</button>
-            <button class="nav-key" onclick="send('right')">▶</button>
-
-            <button class="green-key" onclick="send('2nd')">2nd</button>
-            <button class="special" onclick="send('nd')">n/d</button>
-            <button class="special" onclick="send('sq')">x²</button>
-            <button class="special" onclick="send('sqrt')">√</button>
-
-            <button onclick="send('7')">7</button>
-            <button onclick="send('8')">8</button>
-            <button onclick="send('9')">9</button>
-            <button class="op" onclick="send('div')">÷</button>
-
-            <button onclick="send('4')">4</button>
-            <button onclick="send('5')">5</button>
-            <button onclick="send('6')">6</button>
-            <button class="op" onclick="send('mul')">×</button>
-
-            <button onclick="send('1')">1</button>
-            <button onclick="send('2')">2</button>
-            <button onclick="send('3')">3</button>
-            <button class="op" onclick="send('sub')">−</button>
-
-            <button onclick="send('0')">0</button>
-            <button onclick="send('dot')">.</button>
-            <button class="special" onclick="send('toggle')">f◄►d</button>
-            <button class="op" onclick="send('add')">+</button>
-
-            <button class="clear-btn" onclick="send('clear')">CLEAR</button>
-            <button class="enter-btn" onclick="send('enter')">ENTER</button>
+    <div class="header">
+        <h1>TI-30XS Remote Control</h1>
+        <div class="status" id="status">
+            <span class="dot"></span>Connecting...
         </div>
     </div>
 
+    <div class="remote-container">
+        <div class="keypad">
+            <!-- Row 1: Control buttons -->
+            <button class="green" onclick="send('2nd')"><span class="second-fn"></span>2nd</button>
+            <button class="dummy">mode</button>
+            <button class="dummy">del</button>
+            <button class="clear-btn" onclick="send('clear')">clear</button>
+            <button class="dummy">on</button>
+
+            <!-- Row 2: Functions -->
+            <button class="dummy">yˣ</button>
+            <button class="black" onclick="send('sqrt')"><span class="second-fn">x²</span>√</button>
+            <button class="black" onclick="send('sq')">x²</button>
+            <button class="dummy">^</button>
+            <button class="dummy">log</button>
+
+            <!-- Row 3: More functions -->
+            <button class="black" onclick="send('nd')"><span class="second-fn">un/d</span>n/d</button>
+            <button class="dummy">sin</button>
+            <button class="dummy">cos</button>
+            <button class="dummy">tan</button>
+            <button class="dummy">π</button>
+
+            <!-- Row 4: 7 8 9 ÷ -->
+            <button class="white" onclick="send('7')">7</button>
+            <button class="white" onclick="send('8')">8</button>
+            <button class="white" onclick="send('9')">9</button>
+            <button class="blue" onclick="send('div')">÷</button>
+            <button class="dummy">%</button>
+
+            <!-- Row 5: 4 5 6 × -->
+            <button class="white" onclick="send('4')">4</button>
+            <button class="white" onclick="send('5')">5</button>
+            <button class="white" onclick="send('6')">6</button>
+            <button class="blue" onclick="send('mul')">×</button>
+            <button class="black" onclick="send('left')">◀</button>
+
+            <!-- Row 6: 1 2 3 − -->
+            <button class="white" onclick="send('1')">1</button>
+            <button class="white" onclick="send('2')">2</button>
+            <button class="white" onclick="send('3')">3</button>
+            <button class="blue" onclick="send('sub')">−</button>
+            <button class="black" onclick="send('right')">▶</button>
+
+            <!-- Row 7: 0 . toggle + enter -->
+            <button class="white" onclick="send('0')">0</button>
+            <button class="white" onclick="send('dot')">.</button>
+            <button class="black" onclick="send('toggle')">f◄►d</button>
+            <button class="blue" onclick="send('add')">+</button>
+            <button class="enter-btn" onclick="send('enter')">enter</button>
+        </div>
+    </div>
+
+    <div class="footer">
+        Tap buttons to control the calculator display
+    </div>
+
     <script>
-        // Directly using your Ably Key
-        const ably = new Ably.Realtime('pHT1jg.eDekmw:okoPfOKG25Z6WVOm7peHjkK3BF_kNw7sy0O0cRtVVVE');
-        const channel = ably.channels.get('ged-calculator');
-        
-        function send(key) { 
-            channel.publish('keypress', { key: key }); 
-            // Minimal haptic feedback for iPhone users
-            if (window.navigator.vibrate) {
-                window.navigator.vibrate(10);
+        let channel = null;
+
+        function send(key) {
+            if (channel) {
+                channel.publish('keypress', { key: key });
+                
+                // Haptic feedback for mobile
+                if (window.navigator.vibrate) {
+                    window.navigator.vibrate(15);
+                }
             }
         }
+
+        window.onload = function() {
+            const statusEl = document.getElementById('status');
+
+            if (typeof Ably === 'undefined') {
+                statusEl.innerHTML = '<span class="dot"></span>Ably not loaded';
+                return;
+            }
+
+            const ably = new Ably.Realtime('pHT1jg.eDekmw:okoPfOKG25Z6WVOm7peHjkK3BF_kNw7sy0O0cRtVVVE');
+            channel = ably.channels.get('ged-calculator');
+
+            ably.connection.on('connected', () => {
+                statusEl.className = 'status connected';
+                statusEl.innerHTML = '<span class="dot"></span>Connected';
+            });
+
+            ably.connection.on('disconnected', () => {
+                statusEl.className = 'status';
+                statusEl.innerHTML = '<span class="dot"></span>Disconnected';
+            });
+
+            ably.connection.on('failed', () => {
+                statusEl.className = 'status';
+                statusEl.innerHTML = '<span class="dot"></span>Connection failed';
+            });
+        };
     </script>
 </body>
 </html>
