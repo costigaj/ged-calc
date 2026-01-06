@@ -1,175 +1,40 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TI-30XS - Full Navigation</title>
-    <script src="https://cdn.ably.com/lib/ably.min-1.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/fraction.js@4.1.1/dist/fraction.min.js"></script>
-    <style>
-        :root { --bg: #1a1a1a; --calc: #3c3c3c; --lcd: #aebbaf; --high: #ffff00; }
-        body { background: var(--bg); display: flex; justify-content: center; font-family: sans-serif; padding-top: 20px; }
-        .calc-container { background: var(--calc); width: 380px; padding: 25px; border-radius: 25px; border: 6px solid #555; }
-        .screen-container { position: relative; background: var(--lcd); height: 110px; margin-bottom: 25px; border: 4px inset #888; padding: 10px; }
-        #second-indicator { position: absolute; top: 5px; left: 10px; font-size: 12px; font-weight: bold; opacity: 0.1; color: #1b5e20; }
-        #second-indicator.active { opacity: 1; }
-        #display-area { height: 100%; width: 100%; display: flex; align-items: center; justify-content: flex-end; font-size: 28px; color: #222; overflow: hidden; }
-        .keypad { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
-        button { height: 48px; border-radius: 8px; border: none; font-weight: bold; font-size: 13px; color: #666; background: #2b2b2b; pointer-events: none; }
-        .live { background: #555; color: white; box-shadow: 0 3px #222; }
-        .blue { background: #4a90e2 !important; } .green { background: #50b347 !important; } .red { background: #e74c3c !important; }
-        .highlight { background-color: var(--high) !important; color: #000 !important; box-shadow: 0 0 25px var(--high); transform: scale(1.1); }
-    </style>
-</head>
-<body>
-
-    <div class="calc-container">
-        <div class="screen-container">
-            <div id="second-indicator">2ND</div>
-            <div id="display-area">\( 0 \)</div>
-        </div>
-        <div class="keypad">
-            <button id="btn-2nd" class="live green">2nd</button><button class="ghost">mode</button><button class="ghost">del</button><button id="btn-clear" class="live red">clear</button><button class="ghost">on</button>
-            <button class="ghost">yˣ</button><button id="btn-sqrt" class="live">√</button><button id="btn-sq" class="live">x²</button><button class="ghost">^</button><button class="ghost">log</button>
-            <button id="btn-nd" class="live blue">n/d</button><button class="ghost">sin</button><button class="ghost">cos</button><button class="ghost">tan</button><button class="ghost">π</button>
-            <button id="btn-7" class="live">7</button><button id="btn-8" class="live">8</button><button id="btn-9" class="live">9</button><button id="btn-div" class="live">÷</button><button class="ghost">%</button>
-            <button id="btn-4" class="live">4</button><button id="btn-5" class="live">5</button><button id="btn-6" class="live">6</button><button id="btn-mul" class="live">×</button><button class="ghost">(</button>
-            <button id="btn-1" class="live">1</button><button id="btn-2" class="live">2</button><button id="btn-3" class="live">3</button><button id="btn-sub" class="live">−</button><button class="ghost">)</button>
-            <button id="btn-0" class="live">0</button><button id="btn-dot" class="live">.</button><button id="btn-toggle" class="live blue">f◄►d</button><button id="btn-add" class="live">+</button><button id="btn-enter" class="live green">enter</button>
-        </div>
-    </div>
-
-    <script>
-        let displayString = "0"; 
-        let evalString = "";    
-        let isFractionMode = false;
-        let fractionNum = "";
-        let fractionDen = "";
-        let activePart = "num"; // 'num', 'den', or 'outside'
-        let isSecondActive = false;
-
-        const ably = new Ably.Realtime('pHT1jg.eDekmw:okoPfOKG25Z6WVOm7peHjkK3BF_kNw7sy0O0cRtVVVE');
-        const channel = ably.channels.get('ged-calculator');
-
-        channel.subscribe('keypress', (msg) => {
-            handleKey(msg.data.key);
-        });
-
-        function handleKey(key) {
-            const btn = document.getElementById(`btn-${key}`);
-            const indicator = document.getElementById('second-indicator');
-
-            if (btn) {
-                btn.classList.add('highlight');
-                setTimeout(() => btn.classList.remove('highlight'), 1000);
-            }
-
-            if (key === '2nd') {
-                isSecondActive = !isSecondActive;
-                indicator.classList.toggle('active', isSecondActive);
-                return;
-            }
-
-            if (key === 'clear') {
-                resetCalc();
-            } else if (key === 'nd') {
-                isFractionMode = true; activePart = "num";
-            } else if (key === 'down' || key === 'right') {
-                if (isFractionMode) {
-                    if (activePart === "num") activePart = "den";
-                    else if (activePart === "den") activePart = "outside";
-                }
-            } else if (key === 'up' || key === 'left') {
-                if (isFractionMode) {
-                    if (activePart === "outside") activePart = "den";
-                    else if (activePart === "den") activePart = "num";
-                }
-            } else if (key === 'enter') {
-                calculate();
-            } else if (key === 'toggle') {
-                toggleFormat();
-            } else if (key === 'sqrt') {
-                evalString += "Math.sqrt(";
-                displayString = "\\sqrt{";
-            } else if (key === 'sq') {
-                evalString = `Math.pow(${evalString || 0}, 2)`;
-                displayString += "^2";
-            } else {
-                handleInput(key);
-            }
-
-            if (key !== '2nd' && isSecondActive) {
-                isSecondActive = false;
-                indicator.classList.remove('active');
-            }
-            render();
+function calculate() {
+    try {
+        let res;
+        if (isFractionMode) {
+            // Create a fraction object from the n/d input
+            res = new Fraction(fractionNum || 0, fractionDen || 1);
+        } else {
+            // Use fraction.js to evaluate the string to keep it as a fraction
+            res = new Fraction(evalString);
         }
 
-        function handleInput(key) {
-            const map = { 'add': '+', 'sub': '-', 'mul': '*', 'div': '/' };
-            let val = map[key] || key;
+        // Store the result as a fraction object for the toggle button to use later
+        currentMathValue = res; 
 
-            if (isFractionMode && activePart !== "outside") {
-                if (activePart === "num") fractionNum += val;
-                else fractionDen += val;
-            } else {
-                // If we are "outside" a fraction, we continue the normal evalString
-                if (isFractionMode && activePart === "outside") {
-                    // Convert current fraction to a single number for the math engine
-                    evalString = `(${fractionNum || 0}) / (${fractionDen || 1})`;
-                    displayString = `\\frac{${fractionNum}}{${fractionDen}}`;
-                    isFractionMode = false;
-                }
-                if (displayString === "0") { displayString = ""; evalString = ""; }
-                displayString += val;
-                evalString += val;
-            }
-        }
+        // Display as a LaTeX fraction (e.g., \frac{3}{4})
+        displayString = `\\frac{${res.n}}{${res.d}}`;
+        evalString = res.toString(); // Keep decimal version in background for further math
+        
+        isFractionMode = false;
+        fractionNum = ""; 
+        fractionDen = "";
+    } catch (e) {
+        displayString = "\\text{Error}";
+    }
+}
 
-        function calculate() {
-            try {
-                let expr = isFractionMode ? `(${fractionNum || 0})/(${fractionDen || 1})` : evalString;
-                let res = eval(expr);
-                res = Math.round(res * 1e10) / 1e10;
-                displayString = res.toString();
-                evalString = res.toString();
-                isFractionMode = false;
-                fractionNum = ""; fractionDen = "";
-            } catch (e) { displayString = "Error"; }
+function toggleFormat() {
+    try {
+        // If it's currently showing a fraction, switch to decimal
+        if (displayString.includes('frac')) {
+            let decimal = currentMathValue.n / currentMathValue.d;
+            displayString = decimal.toString();
+        } else {
+            // Switch back to the fraction
+            displayString = `\\frac{${currentMathValue.n}}{${currentMathValue.d}}`;
         }
-
-        function toggleFormat() {
-            try {
-                let val = eval(evalString);
-                if (displayString.includes('frac')) {
-                    displayString = val.toString();
-                } else {
-                    let f = new Fraction(val);
-                    displayString = `\\frac{${f.n}}{${f.d}}`;
-                }
-            } catch (e) {}
-        }
-
-        function resetCalc() {
-            displayString = "0"; evalString = ""; isFractionMode = false;
-            fractionNum = ""; fractionDen = "";
-            document.getElementById('second-indicator').classList.remove('active');
-        }
-
-        function render() {
-            let output = displayString;
-            if (isFractionMode) {
-                let n = fractionNum || "\\square";
-                let d = fractionDen || "\\square";
-                if (activePart === "num") n = `\\color{blue}{${n}}`;
-                else if (activePart === "den") d = `\\color{blue}{${d}}`;
-                output = `\\frac{${n}}{${d}}`;
-                if (activePart === "outside") output += "\\color{blue}{|}"; // Visual cursor
-            }
-            document.getElementById('display-area').innerHTML = `\\( ${output} \\)`;
-            MathJax.typeset();
-        }
-    </script>
-</body>
-</html>
+    } catch (e) {
+        console.log("Toggle Error:", e);
+    }
+}
