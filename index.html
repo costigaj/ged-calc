@@ -3,12 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TI-30XS - Interaction Rescue</title>
-    
+    <title>TI-30XS - Full Navigation</title>
     <script src="https://cdn.ably.com/lib/ably.min-1.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fraction.js@4.1.1/dist/fraction.min.js"></script>
-
     <style>
         :root { --bg: #1a1a1a; --calc: #3c3c3c; --lcd: #aebbaf; --high: #ffff00; }
         body { background: var(--bg); display: flex; justify-content: center; font-family: sans-serif; padding-top: 20px; }
@@ -43,20 +41,18 @@
     </div>
 
     <script>
-        // Use Global state to ensure Ably finds it
         let displayString = "0"; 
         let evalString = "";    
         let isFractionMode = false;
         let fractionNum = "";
         let fractionDen = "";
-        let activePart = "num";
+        let activePart = "num"; // 'num', 'den', or 'outside'
         let isSecondActive = false;
 
         const ably = new Ably.Realtime('pHT1jg.eDekmw:okoPfOKG25Z6WVOm7peHjkK3BF_kNw7sy0O0cRtVVVE');
         const channel = ably.channels.get('ged-calculator');
 
         channel.subscribe('keypress', (msg) => {
-            console.log("Remote signal received:", msg.data.key);
             handleKey(msg.data.key);
         });
 
@@ -64,29 +60,31 @@
             const btn = document.getElementById(`btn-${key}`);
             const indicator = document.getElementById('second-indicator');
 
-            // Highlight Logic
             if (btn) {
                 btn.classList.add('highlight');
                 setTimeout(() => btn.classList.remove('highlight'), 1000);
             }
 
-            // 2nd Button Logic
             if (key === '2nd') {
                 isSecondActive = !isSecondActive;
                 indicator.classList.toggle('active', isSecondActive);
                 return;
             }
 
-            // Core Logic
             if (key === 'clear') {
-                displayString = "0"; evalString = ""; isFractionMode = false;
-                fractionNum = ""; fractionDen = "";
+                resetCalc();
             } else if (key === 'nd') {
                 isFractionMode = true; activePart = "num";
-            } else if (key === 'down' && isFractionMode) {
-                activePart = "den";
-            } else if (key === 'up' && isFractionMode) {
-                activePart = "num";
+            } else if (key === 'down' || key === 'right') {
+                if (isFractionMode) {
+                    if (activePart === "num") activePart = "den";
+                    else if (activePart === "den") activePart = "outside";
+                }
+            } else if (key === 'up' || key === 'left') {
+                if (isFractionMode) {
+                    if (activePart === "outside") activePart = "den";
+                    else if (activePart === "den") activePart = "num";
+                }
             } else if (key === 'enter') {
                 calculate();
             } else if (key === 'toggle') {
@@ -98,26 +96,31 @@
                 evalString = `Math.pow(${evalString || 0}, 2)`;
                 displayString += "^2";
             } else {
-                handleStandardInput(key);
+                handleInput(key);
             }
 
-            // Auto-off 2nd indicator
             if (key !== '2nd' && isSecondActive) {
                 isSecondActive = false;
                 indicator.classList.remove('active');
             }
-            
             render();
         }
 
-        function handleStandardInput(key) {
+        function handleInput(key) {
             const map = { 'add': '+', 'sub': '-', 'mul': '*', 'div': '/' };
             let val = map[key] || key;
 
-            if (isFractionMode) {
+            if (isFractionMode && activePart !== "outside") {
                 if (activePart === "num") fractionNum += val;
                 else fractionDen += val;
             } else {
+                // If we are "outside" a fraction, we continue the normal evalString
+                if (isFractionMode && activePart === "outside") {
+                    // Convert current fraction to a single number for the math engine
+                    evalString = `(${fractionNum || 0}) / (${fractionDen || 1})`;
+                    displayString = `\\frac{${fractionNum}}{${fractionDen}}`;
+                    isFractionMode = false;
+                }
                 if (displayString === "0") { displayString = ""; evalString = ""; }
                 displayString += val;
                 evalString += val;
@@ -132,6 +135,7 @@
                 displayString = res.toString();
                 evalString = res.toString();
                 isFractionMode = false;
+                fractionNum = ""; fractionDen = "";
             } catch (e) { displayString = "Error"; }
         }
 
@@ -147,12 +151,21 @@
             } catch (e) {}
         }
 
+        function resetCalc() {
+            displayString = "0"; evalString = ""; isFractionMode = false;
+            fractionNum = ""; fractionDen = "";
+            document.getElementById('second-indicator').classList.remove('active');
+        }
+
         function render() {
             let output = displayString;
             if (isFractionMode) {
                 let n = fractionNum || "\\square";
                 let d = fractionDen || "\\square";
-                output = activePart === "num" ? `\\frac{\\color{blue}{${n}}}{${d}}` : `\\frac{${n}}{\\color{blue}{${d}}}`;
+                if (activePart === "num") n = `\\color{blue}{${n}}`;
+                else if (activePart === "den") d = `\\color{blue}{${d}}`;
+                output = `\\frac{${n}}{${d}}`;
+                if (activePart === "outside") output += "\\color{blue}{|}"; // Visual cursor
             }
             document.getElementById('display-area').innerHTML = `\\( ${output} \\)`;
             MathJax.typeset();
