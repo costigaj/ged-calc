@@ -1,0 +1,19 @@
+body { background: #222; display: flex; justify-content: center; padding-top: 50px; }
+.calculator { background: #444; padding: 20px; border-radius: 12px; width: 280px; }
+.screen { 
+    background: #9cad9e; height: 50px; margin-bottom: 20px; 
+    text-align: right; padding: 10px; font-family: monospace; font-size: 24px; 
+}
+.keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+button { height: 50px; border-radius: 5px; border: none; cursor: pointer; font-weight: bold; }
+
+/* The 1-second highlight you requested */
+.active-highlight { 
+    background-color: #ffff00 !important; 
+    box-shadow: 0 0 20px #ffff00;
+    transition: none; 
+}
+
+.blue { background: #4a90e2; color: white; }
+.green { background: #50b347; color: white; }
+.red { background: #e94e77; color: white; }
