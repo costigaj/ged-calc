@@ -1,5 +1,13 @@
 <script>
-    // 1. GLOBAL STATE
+window.onload = function() {
+    // 1. SAFETY CHECK: If Ably didn't load, stop and show error
+    if (typeof Ably === 'undefined') {
+        console.error("❌ Ably Library failed to load from CDN.");
+        document.getElementById('display-area').innerHTML = "Connection Error";
+        return;
+    }
+
+    // 2. GLOBAL STATE
     let displayString = "0"; 
     let evalString = "";    
     let isFractionMode = false;
@@ -9,16 +17,12 @@
     let isSecondActive = false;
     let currentMathValue = null;
 
-    // 2. ABLY INITIALIZATION (Rescue Version)
+    // 3. ABLY INITIALIZATION
     const ably = new Ably.Realtime('pHT1jg.eDekmw:okoPfOKG25Z6WVOm7peHjkK3BF_kNw7sy0O0cRtVVVE');
     const channel = ably.channels.get('ged-calculator');
 
     ably.connection.on('connected', () => {
-        console.log("✅ ABLY CONNECTED: Student page is ready.");
-    });
-
-    ably.connection.on('failed', () => {
-        console.log("❌ ABLY FAILED: Check your API key or internet.");
+        console.log("✅ ABLY CONNECTED: Ready for remote signals.");
     });
 
     channel.subscribe('keypress', (msg) => {
@@ -26,7 +30,7 @@
         handleKey(msg.data.key);
     });
 
-    // 3. LOGIC CONTROLLER
+    // 4. LOGIC CONTROLLER
     function handleKey(key) {
         const btn = document.getElementById(`btn-${key}`);
         const indicator = document.getElementById('second-indicator');
@@ -134,4 +138,5 @@
         document.getElementById('display-area').innerHTML = `\\( ${output} \\)`;
         if (window.MathJax) MathJax.typeset();
     }
+};
 </script>
