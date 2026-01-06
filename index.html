@@ -3,33 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TI-30XS - Professional Build</title>
+    <title>TI-30XS Student View - Final Build</title>
     
     <script src="ably.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fraction.js@4.1.1/dist/fraction.min.js"></script>
 
     <style>
-        :root { --bg: #1a1a1a; --calc: #3c3c3c; --lcd: #aebbaf; --high: #ffff00; }
-        body { background: var(--bg); display: flex; justify-content: center; font-family: sans-serif; padding-top: 20px; }
-        .calc-container { background: var(--calc); width: 380px; padding: 25px; border-radius: 25px; border: 6px solid #555; box-shadow: 0 20px 50px rgba(0,0,0,0.6); }
-        .screen-container { position: relative; background: var(--lcd); height: 110px; margin-bottom: 25px; border: 4px inset #888; padding: 10px; }
-        #second-indicator { position: absolute; top: 5px; left: 10px; font-size: 12px; font-weight: bold; opacity: 0.1; color: #1b5e20; }
+        :root {
+            --bg-color: #1a1a1a;
+            --calc-body: #3c3c3c;
+            --screen-bg: #aebbaf;
+            --btn-live: #555;
+            --btn-ghost: #2b2b2b;
+            --highlight: #ffff00;
+        }
+
+        body { 
+            background: var(--bg-color); 
+            display: flex; 
+            justify-content: center; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            padding-top: 20px; 
+            margin: 0;
+        }
+
+        .calc-container { 
+            background: var(--calc-body); 
+            width: 380px; 
+            padding: 25px; 
+            border-radius: 25px; 
+            border: 6px solid #555; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6); 
+        }
+
+        .screen-container { 
+            position: relative; 
+            background: var(--screen-bg); 
+            height: 110px; 
+            margin-bottom: 25px; 
+            border: 4px inset #888; 
+            padding: 10px; 
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.2); 
+        }
+
+        #second-indicator { 
+            position: absolute; 
+            top: 5px; 
+            left: 10px; 
+            font-size: 12px; 
+            font-weight: bold; 
+            color: #1b5e20; 
+            opacity: 0.1; 
+            transition: opacity 0.2s;
+        }
+
         #second-indicator.active { opacity: 1; }
-        #display-area { height: 100%; width: 100%; display: flex; align-items: center; justify-content: flex-end; font-size: 28px; color: #222; overflow: hidden; }
-        .keypad { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
-        button { height: 48px; border-radius: 8px; border: none; font-weight: bold; font-size: 13px; color: #666; background: #2b2b2b; pointer-events: none; }
-        .live { background: #555; color: white; box-shadow: 0 3px #222; }
-        .blue { background: #4a90e2 !important; } .green { background: #50b347 !important; } .red { background: #e74c3c !important; }
-        .highlight { background-color: var(--high) !important; color: #000 !important; box-shadow: 0 0 25px var(--high); transform: scale(1.1); }
+
+        #display-area { 
+            height: 100%; 
+            width: 100%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: flex-end; 
+            font-size: 28px; 
+            color: #222; 
+            overflow: hidden; 
+        }
+
+        .keypad { 
+            display: grid; 
+            grid-template-columns: repeat(5, 1fr); 
+            gap: 10px; 
+        }
+
+        button { 
+            height: 48px; 
+            border-radius: 8px; 
+            border: none; 
+            font-weight: bold; 
+            font-size: 13px; 
+            color: #777; 
+            background: var(--btn-ghost); 
+            pointer-events: none; 
+            transition: all 0.1s ease;
+        }
+
+        /* Active Buttons */
+        .live { background: var(--btn-live); color: white; box-shadow: 0 3px #222; }
+        .blue { background: #4a90e2 !important; }
+        .green { background: #50b347 !important; }
+        .red { background: #e74c3c !important; }
+
+        /* Keypress Highlight Effect */
+        .highlight { 
+            background-color: var(--highlight) !important; 
+            color: #000 !important; 
+            box-shadow: 0 0 25px var(--highlight); 
+            transform: scale(1.1); 
+            z-index: 10; 
+        }
+
+        .label-top { 
+            font-size: 10px; 
+            text-align: center; 
+            margin-bottom: 10px; 
+            color: #888; 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+        }
     </style>
 </head>
 <body>
 
     <div class="calc-container">
+        <div class="label-top">TI-30XS MultiView - Classroom Mode</div>
         <div class="screen-container">
             <div id="second-indicator">2ND</div>
-            <div id="display-area">Loading...</div>
+            <div id="display-area">\( 0 \)</div>
         </div>
         <div class="keypad">
             <button id="btn-2nd" class="live green">2nd</button><button class="ghost">mode</button><button class="ghost">del</button><button id="btn-clear" class="live red">clear</button><button class="ghost">on</button>
@@ -45,14 +136,15 @@
     <script>
         window.onload = function() {
             const screen = document.getElementById('display-area');
-            const indicator = document.getElementById('second-indicator');
+            const secondIndicator = document.getElementById('second-indicator');
+
+            // Force 0 immediately
+            screen.innerHTML = "\\( 0 \\)";
 
             if (typeof Ably === 'undefined') {
-                screen.innerHTML = "Lib Error"; return;
+                console.error("ably.js not found in root.");
+                return;
             }
-
-            const ably = new Ably.Realtime('pHT1jg.eDekmw:okoPfOKG25Z6WVOm7peHjkK3BF_kNw7sy0O0cRtVVVE');
-            const channel = ably.channels.get('ged-calculator');
 
             // --- State ---
             let displayString = "0"; 
@@ -60,29 +152,30 @@
             let isFractionMode = false;
             let fractionNum = "";
             let fractionDen = "";
-            let activePart = "num"; 
+            let activePart = "num"; // 'num', 'den', or 'outside'
             let isSecondActive = false;
             let currentMathValue = null;
 
-            ably.connection.on('connected', () => {
-                screen.innerHTML = "\\( 0 \\)";
-                MathJax.typeset();
-            });
+            // --- Connection ---
+            const ably = new Ably.Realtime('pHT1jg.eDekmw:okoPfOKG25Z6WVOm7peHjkK3BF_kNw7sy0O0cRtVVVE');
+            const channel = ably.channels.get('ged-calculator');
 
             channel.subscribe('keypress', (msg) => {
                 handleKey(msg.data.key);
             });
 
+            // --- Control Logic ---
             function handleKey(key) {
                 const btn = document.getElementById(`btn-${key}`);
+                
                 if (btn) {
                     btn.classList.add('highlight');
-                    setTimeout(() => btn.classList.remove('highlight'), 1000);
+                    setTimeout(() => btn.classList.remove('highlight'), 600);
                 }
 
                 if (key === '2nd') {
                     isSecondActive = !isSecondActive;
-                    indicator.classList.toggle('active', isSecondActive);
+                    secondIndicator.classList.toggle('active', isSecondActive);
                     return;
                 }
 
@@ -91,11 +184,15 @@
                 } else if (key === 'nd') {
                     isFractionMode = true; activePart = "num";
                 } else if (key === 'down' || key === 'right') {
-                    if (isFractionMode && activePart === "num") activePart = "den";
-                    else if (isFractionMode && activePart === "den") activePart = "outside";
+                    if (isFractionMode) {
+                        if (activePart === "num") activePart = "den";
+                        else if (activePart === "den") activePart = "outside";
+                    }
                 } else if (key === 'up' || key === 'left') {
-                    if (isFractionMode && activePart === "outside") activePart = "den";
-                    else if (isFractionMode && activePart === "den") activePart = "num";
+                    if (isFractionMode) {
+                        if (activePart === "outside") activePart = "den";
+                        else if (activePart === "den") activePart = "num";
+                    }
                 } else if (key === 'enter') {
                     calculate();
                 } else if (key === 'toggle') {
@@ -104,9 +201,10 @@
                     handleStandardInput(key);
                 }
 
+                // Reset 2nd state after use
                 if (key !== '2nd' && isSecondActive) {
                     isSecondActive = false;
-                    indicator.classList.remove('active');
+                    secondIndicator.classList.remove('active');
                 }
                 render();
             }
@@ -120,7 +218,65 @@
                     else fractionDen += val;
                 } else {
                     if (displayString === "0") { displayString = ""; evalString = ""; }
+                    // Student sees space, Computer sees raw math
                     displayString += (map[key] && key !== 'neg' ? ` ${val} ` : val);
                     evalString += val;
                 }
             }
+
+            function calculate() {
+                try {
+                    // Extract math without spaces for eval()
+                    let cleanExpr = isFractionMode ? `(${fractionNum || 0})/(${fractionDen || 1})` : evalString.replace(/\s/g, '');
+                    let numericResult = eval(cleanExpr);
+                    
+                    currentMathValue = new Fraction(numericResult);
+                    
+                    // Default to exact fraction display
+                    if (currentMathValue.d === 1) {
+                        displayString = currentMathValue.n.toString();
+                    } else {
+                        displayString = `\\frac{${currentMathValue.n}}{${currentMathValue.d}}`;
+                    }
+                    
+                    evalString = numericResult.toString();
+                    isFractionMode = false;
+                    fractionNum = ""; fractionDen = "";
+                } catch (e) {
+                    displayString = "\\text{Error}";
+                }
+            }
+
+            function toggleFormat() {
+                if (!currentMathValue) return;
+                // Swap between LaTeX fraction and simple decimal
+                if (displayString.includes('frac')) {
+                    displayString = (currentMathValue.n / currentMathValue.d).toString();
+                } else {
+                    displayString = `\\frac{${currentMathValue.n}}{${currentMathValue.d}}`;
+                }
+            }
+
+            function resetCalc() {
+                displayString = "0"; evalString = ""; isFractionMode = false;
+                fractionNum = ""; fractionDen = ""; currentMathValue = null;
+                secondIndicator.classList.remove('active');
+            }
+
+            function render() {
+                let output = displayString;
+                if (isFractionMode) {
+                    let n = fractionNum || "\\square";
+                    let d = fractionDen || "\\square";
+                    if (activePart === "num") n = `\\color{blue}{${n}}`;
+                    else if (activePart === "den") d = `\\color{blue}{${d}}`;
+                    output = `\\frac{${n}}{${d}}`;
+                    if (activePart === "outside") output += "\\color{blue}{|}";
+                }
+                screen.innerHTML = `\\( ${output} \\)`;
+                if (window.MathJax) MathJax.typesetPromise();
+            }
+        };
+    </script>
+</body>
+</html>
