@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <script src="https://cdn.ably.com/lib/ably.min-1.js"></script>
+    <style>
+        * { box-sizing: border-box; touch-action: manipulation; }
+        body { 
+            font-family: -apple-system, sans-serif; 
+            background: #000; color: white; 
+            margin: 0; padding: 10px; 
+            height: 100vh; display: flex; justify-content: center; align-items: flex-start;
+            overflow: hidden; 
+        }
+        .remote-container {
+            width: 100%;
+            max-width: 380px;
+        }
+        
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 6px; 
+        }
+        
+        button { 
+            height: 52px; 
+            border-radius: 6px; border: none; 
+            background: #222; color: white; 
+            font-size: 16px; font-weight: 600;
+            display: flex; align-items: center; justify-content: center;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        button:active { background: #444; transform: scale(0.95); }
+        
+        /* TI Color Coding */
+        .green-key { background: #2e7d32; color: #fff; } /* 2nd */
+        .special { background: #1a237e; color: #fff; } /* Function keys */
+        .nav-key { background: #424242; color: #fff; border: 1px solid #555; } /* Arrows */
+        .op { background: #333; color: #ffa726; border: 1px solid #444; }
+        .clear-btn { background: #b71c1c; grid-column: span 2; }
+        .enter-btn { background: #1b5e20; grid-column: span 2; }
+
+        h3 { font-size: 11px; text-align: center; color: #666; margin: 5px 0 10px 0; text-transform: uppercase; letter-spacing: 1px; }
+        .spacer { height: 52px; pointer-events: none; visibility: hidden; }
+    </style>
+</head>
+<body>
+    <div class="remote-container">
+        <h3>TI-30XS Remote Controller</h3>
+        <div class="grid">
+            <button class="nav-key" onclick="send('left')">◀</button>
+            <button class="nav-key" onclick="send('up')">▲</button>
+            <button class="nav-key" onclick="send('down')">▼</button>
+            <button class="nav-key" onclick="send('right')">▶</button>
+
+            <button class="green-key" onclick="send('2nd')">2nd</button>
+            <button class="special" onclick="send('nd')">n/d</button>
+            <button class="special" onclick="send('sq')">x²</button>
+            <button class="special" onclick="send('sqrt')">√</button>
+
+            <button onclick="send('7')">7</button>
+            <button onclick="send('8')">8</button>
+            <button onclick="send('9')">9</button>
+            <button class="op" onclick="send('div')">÷</button>
+
+            <button onclick="send('4')">4</button>
+            <button onclick="send('5')">5</button>
+            <button onclick="send('6')">6</button>
+            <button class="op" onclick="send('mul')">×</button>
+
+            <button onclick="send('1')">1</button>
+            <button onclick="send('2')">2</button>
+            <button onclick="send('3')">3</button>
+            <button class="op" onclick="send('sub')">−</button>
+
+            <button onclick="send('0')">0</button>
+            <button onclick="send('dot')">.</button>
+            <button class="special" onclick="send('toggle')">f◄►d</button>
+            <button class="op" onclick="send('add')">+</button>
+
+            <button class="clear-btn" onclick="send('clear')">CLEAR</button>
+            <button class="enter-btn" onclick="send('enter')">ENTER</button>
+        </div>
+    </div>
+
+    <script>
+        // Directly using your Ably Key
+        const ably = new Ably.Realtime('pHT1jg.eDekmw:okoPfOKG25Z6WVOm7peHjkK3BF_kNw7sy0O0cRtVVVE');
+        const channel = ably.channels.get('ged-calculator');
+        
+        function send(key) { 
+            channel.publish('keypress', { key: key }); 
+            // Minimal haptic feedback for iPhone users
+            if (window.navigator.vibrate) {
+                window.navigator.vibrate(10);
+            }
+        }
+    </script>
+</body>
+</html>
