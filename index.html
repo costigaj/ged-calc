@@ -223,8 +223,8 @@
 
             <!-- Row 2 -->
             <button class="dummy">yˣ</button>
-            <button id="btn-sqrt" class="black"><span class="second-fn">x²</span>√</button>
-            <button id="btn-sq" class="black"><span class="second-fn"></span>x²</button>
+            <button id="btn-x2" class="black"><span class="second-fn">√</span>x²</button>
+            <button class="dummy">^</button>
             <button class="dummy">^</button>
             <button class="dummy">log</button>
 
@@ -282,7 +282,9 @@
             fractionDenominator: '',
             fractionPart: 'numerator', // 'numerator' or 'denominator'
             // Display mode for results
-            displayAsFraction: true
+            displayAsFraction: true,
+            // Pending operations (for sqrt where you enter number after)
+            pendingOperation: null // 'sqrt' or null
         };
 
         // ===== FRACTION MATH UTILITIES =====
@@ -331,12 +333,17 @@
             const displayArea = document.getElementById('display-area');
             const exprDisplay = document.getElementById('expression-display');
             
-            // Show expression in secondary display
-            exprDisplay.textContent = state.expression;
+            // Show expression in secondary display (with 2nd indicator if active)
+            let secondIndicator = state.secondMode ? '2nd ' : '';
+            exprDisplay.textContent = secondIndicator + state.expression;
             
             let displayText;
             
-            if (state.enteringFraction) {
+            if (state.pendingOperation === 'sqrt') {
+                // Show square root with number under radical
+                const num = state.currentInput || '\\square';
+                displayText = `\\(\\sqrt{${num}}\\)`;
+            } else if (state.enteringFraction) {
                 // Show fraction being entered
                 const num = state.fractionNumerator || '?';
                 const den = state.fractionDenominator || '?';
@@ -404,16 +411,14 @@
                 case 'clear':
                     clearAll();
                     break;
-                case 'sqrt':
+                case 'x2':
+                    // x² button: primary = square, 2nd = square root
                     if (state.secondMode) {
-                        squareNumber();
+                        startSquareRoot();
                         state.secondMode = false;
                     } else {
-                        squareRoot();
+                        squareNumber();
                     }
-                    break;
-                case 'sq':
-                    squareNumber();
                     break;
                 case 'nd':
                     startFraction();
@@ -423,6 +428,15 @@
                     break;
                 case '2nd':
                     state.secondMode = !state.secondMode;
+                    // Update 2nd button visual state
+                    const btn2nd = document.getElementById('btn-2nd');
+                    if (btn2nd) {
+                        if (state.secondMode) {
+                            btn2nd.style.boxShadow = '0 0 10px #f4d03f, 0 3px 0 #1b5e20';
+                        } else {
+                            btn2nd.style.boxShadow = '';
+                        }
+                    }
                     break;
                 case 'left':
                 case 'right':
@@ -532,6 +546,22 @@
                 finishFraction();
             }
             
+            // Handle pending square root
+            if (state.pendingOperation === 'sqrt') {
+                let value = parseFloat(state.currentInput) || 0;
+                if (value < 0) {
+                    state.currentInput = 'Error';
+                    state.lastResult = null;
+                } else {
+                    state.lastResult = Math.sqrt(value);
+                    state.currentInput = '';
+                }
+                state.pendingOperation = null;
+                state.expression = '';
+                state.displayAsFraction = true;
+                return;
+            }
+            
             let expr = state.expression + state.currentInput;
             
             if (!expr.trim()) return;
@@ -565,27 +595,17 @@
             state.fractionDenominator = '';
             state.fractionPart = 'numerator';
             state.displayAsFraction = true;
+            state.pendingOperation = null;
+            // Reset 2nd button visual
+            const btn2nd = document.getElementById('btn-2nd');
+            if (btn2nd) btn2nd.style.boxShadow = '';
         }
 
-        function squareRoot() {
-            let value;
-            if (state.enteringFraction) {
-                finishFraction();
-            }
-            
-            if (state.lastResult !== null) {
-                value = state.lastResult;
-            } else {
-                value = parseFloat(state.currentInput) || 0;
-            }
-            
-            if (value < 0) {
-                state.currentInput = 'Error';
-                state.lastResult = null;
-            } else {
-                state.lastResult = Math.sqrt(value);
-                state.currentInput = '';
-            }
+        function startSquareRoot() {
+            // Set pending operation - user will enter number next, then press enter
+            state.pendingOperation = 'sqrt';
+            state.currentInput = '';
+            state.lastResult = null;
             state.expression = '';
         }
 
