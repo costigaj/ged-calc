@@ -116,7 +116,7 @@
             transform: translateX(-50%);
             font-size: 9px;
             color: #f4d03f;
-            font-weight: normal;
+            font-weight: bold;
             white-space: nowrap;
         }
 
@@ -124,10 +124,6 @@
             background: var(--btn-gray);
             color: #666;
             opacity: 0.4;
-        }
-
-        button.skip {
-            visibility: hidden;
         }
 
         button.black {
@@ -198,30 +194,30 @@
         </div>
 
         <div class="keypad">
-            <!-- Row 1: 2nd, skip, skip, table (2nd:f<>d), skip -->
+            <!-- Row 1: 2nd, dummy, dummy, table (2nd:f<>d), dummy -->
             <button id="btn-2nd" class="green">2nd</button>
-            <button class="skip"></button>
-            <button class="skip"></button>
+            <button class="dummy"></button>
+            <button class="dummy"></button>
             <button id="btn-table" class="dummy"><span class="second-fn">f◄►d</span>table</button>
-            <button class="skip"></button>
+            <button class="dummy"></button>
 
-            <!-- Row 2: π, n/d, skip, skip, clear -->
+            <!-- Row 2: π, n/d, dummy, dummy, clear -->
             <button id="btn-pi" class="black">π</button>
             <button id="btn-nd" class="black">n/d</button>
-            <button class="skip"></button>
-            <button class="skip"></button>
+            <button class="dummy"></button>
+            <button class="dummy"></button>
             <button id="btn-clear" class="black">clear</button>
 
-            <!-- Row 3: skip, skip, skip, skip, ÷ -->
-            <button class="skip"></button>
-            <button class="skip"></button>
-            <button class="skip"></button>
-            <button class="skip"></button>
+            <!-- Row 3: dummy, dummy, dummy, dummy, ÷ -->
+            <button class="dummy"></button>
+            <button class="dummy"></button>
+            <button class="dummy"></button>
+            <button class="dummy"></button>
             <button id="btn-div" class="blue">÷</button>
 
-            <!-- Row 4: skip, skip, ( (2nd:%), ), × -->
-            <button class="skip"></button>
-            <button class="skip"></button>
+            <!-- Row 4: dummy, dummy, ( (2nd:%), ), × -->
+            <button class="dummy"></button>
+            <button class="dummy"></button>
             <button id="btn-paren-open" class="dummy"><span class="second-fn">%</span>(</button>
             <button class="dummy">)</button>
             <button id="btn-mul" class="blue">×</button>
@@ -233,15 +229,15 @@
             <button id="btn-9" class="white">9</button>
             <button id="btn-sub" class="blue">−</button>
 
-            <!-- Row 6: skip, 4, 5, 6, + -->
-            <button class="skip"></button>
+            <!-- Row 6: dummy, 4, 5, 6, + -->
+            <button class="dummy"></button>
             <button id="btn-4" class="white">4</button>
             <button id="btn-5" class="white">5</button>
             <button id="btn-6" class="white">6</button>
             <button id="btn-add" class="blue">+</button>
 
-            <!-- Row 7: skip, 1, 2, 3, ◄► -->
-            <button class="skip"></button>
+            <!-- Row 7: dummy, 1, 2, 3, ◄► -->
+            <button class="dummy"></button>
             <button id="btn-1" class="white">1</button>
             <button id="btn-2" class="white">2</button>
             <button id="btn-3" class="white">3</button>
