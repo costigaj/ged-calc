@@ -22,9 +22,15 @@ exports.handler = async function(event, context) {
     try {
         const client = new Ably.Rest({ key: apiKey });
         
-        // Generate a token request that the client can use
-        const tokenRequest = await client.auth.createTokenRequest({
-            capability: { 'ged-calculator': ['publish', 'subscribe'] }
+        // Wrap callback in a Promise
+        const tokenRequest = await new Promise((resolve, reject) => {
+            client.auth.createTokenRequest(
+                { capability: { 'ged-calculator': ['publish', 'subscribe'] } },
+                function(err, tokenRequest) {
+                    if (err) reject(err);
+                    else resolve(tokenRequest);
+                }
+            );
         });
 
         return {
