@@ -20,7 +20,7 @@ exports.handler = async function(event, context) {
     }
 
     try {
-        const client = new Ably.Rest(apiKey);
+        const client = new Ably.Rest({ key: apiKey });
         
         // Generate a token request that the client can use
         const tokenRequest = await client.auth.createTokenRequest({
