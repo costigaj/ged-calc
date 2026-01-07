@@ -240,7 +240,7 @@
             }
         }
 
-        window.onload = function() {
+        window.onload = async function() {
             const statusEl = document.getElementById('status');
 
             if (typeof Ably === 'undefined') {
@@ -248,23 +248,43 @@
                 return;
             }
 
-            const ably = new Ably.Realtime('pHT1jg.eDekmw:okoPfOKG25Z6WVOm7peHjkK3BF_kNw7sy0O0cRtVVVE');
-            channel = ably.channels.get('ged-calculator');
+            try {
+                // Fetch token from serverless function
+                statusEl.innerHTML = '<span class="dot"></span>Getting token...';
+                const response = await fetch('/.netlify/functions/ably-token');
+                
+                if (!response.ok) {
+                    throw new Error('Failed to get token');
+                }
+                
+                const tokenRequest = await response.json();
+                
+                // Connect using token authentication
+                const ably = new Ably.Realtime({ authCallback: (params, callback) => {
+                    callback(null, tokenRequest);
+                }});
+                
+                channel = ably.channels.get('ged-calculator');
 
-            ably.connection.on('connected', () => {
-                statusEl.className = 'status connected';
-                statusEl.innerHTML = '<span class="dot"></span>Connected';
-            });
+                ably.connection.on('connected', () => {
+                    statusEl.className = 'status connected';
+                    statusEl.innerHTML = '<span class="dot"></span>Connected';
+                });
 
-            ably.connection.on('disconnected', () => {
-                statusEl.className = 'status';
-                statusEl.innerHTML = '<span class="dot"></span>Disconnected';
-            });
+                ably.connection.on('disconnected', () => {
+                    statusEl.className = 'status';
+                    statusEl.innerHTML = '<span class="dot"></span>Disconnected';
+                });
 
-            ably.connection.on('failed', () => {
-                statusEl.className = 'status';
+                ably.connection.on('failed', () => {
+                    statusEl.className = 'status';
+                    statusEl.innerHTML = '<span class="dot"></span>Connection failed';
+                });
+                
+            } catch (error) {
+                console.error('Connection error:', error);
                 statusEl.innerHTML = '<span class="dot"></span>Connection failed';
-            });
+            }
         };
     </script>
 </body>

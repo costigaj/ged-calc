@@ -1,0 +1,8 @@
+{
+  "name": "ged-calc",
+  "version": "1.0.0",
+  "description": "TI-30XS Calculator Remote Display",
+  "dependencies": {
+    "ably": "^1.2.0"
+  }
+}
