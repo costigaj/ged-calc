@@ -41,7 +41,7 @@
 
         .calc-container {
             background: linear-gradient(145deg, #3d3d4a, var(--calc-body));
-            width: 340px;
+            width: 320px;
             padding: 15px;
             border-radius: 15px;
             border: 3px solid var(--calc-border);
@@ -99,11 +99,11 @@
         }
 
         button {
-            height: 32px;
+            height: 36px;
             border-radius: 4px;
             border: none;
             font-weight: bold;
-            font-size: 10px;
+            font-size: 11px;
             cursor: default;
             transition: transform 0.1s, box-shadow 0.1s;
             position: relative;
@@ -114,7 +114,7 @@
             top: -15px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 8px;
+            font-size: 9px;
             color: #f4d03f;
             font-weight: normal;
             white-space: nowrap;
@@ -124,6 +124,10 @@
             background: var(--btn-gray);
             color: #666;
             opacity: 0.4;
+        }
+
+        button.skip {
+            visibility: hidden;
         }
 
         button.black {
@@ -194,67 +198,60 @@
         </div>
 
         <div class="keypad">
-            <!-- Row 1: 2nd, mode, del, clear, off -->
+            <!-- Row 1: 2nd, skip, skip, table (2nd:f<>d), skip -->
             <button id="btn-2nd" class="green">2nd</button>
-            <button class="dummy">mode</button>
-            <button class="dummy">del</button>
-            <button id="btn-clear" class="black">clear</button>
-            <button class="dummy">off</button>
+            <button class="skip"></button>
+            <button class="skip"></button>
+            <button id="btn-table" class="dummy"><span class="second-fn">f◄►d</span>table</button>
+            <button class="skip"></button>
 
-            <!-- Row 2: n/d, x^-1, sin, cos, tan -->
-            <button id="btn-nd" class="black"><span class="second-fn">Un/d</span>n/d</button>
-            <button class="dummy"><span class="second-fn">x√</span>x⁻¹</button>
-            <button class="dummy"><span class="second-fn">sin⁻¹</span>sin</button>
-            <button class="dummy"><span class="second-fn">cos⁻¹</span>cos</button>
-            <button class="dummy"><span class="second-fn">tan⁻¹</span>tan</button>
-
-            <!-- Row 3: x², log, ln, (, ) -->
-            <button id="btn-x2" class="black"><span class="second-fn">√</span>x²</button>
-            <button class="dummy"><span class="second-fn">10ˣ</span>log</button>
-            <button class="dummy"><span class="second-fn">eˣ</span>ln</button>
-            <button class="dummy">(</button>
-            <button class="dummy">)</button>
-
-            <!-- Row 4: ^, %, π, data, stat -->
-            <button class="dummy">^</button>
-            <button id="btn-percent" class="black">%</button>
+            <!-- Row 2: π, n/d, skip, skip, clear -->
             <button id="btn-pi" class="black">π</button>
-            <button class="dummy">data</button>
-            <button class="dummy">stat</button>
+            <button id="btn-nd" class="black">n/d</button>
+            <button class="skip"></button>
+            <button class="skip"></button>
+            <button id="btn-clear" class="black">clear</button>
 
-            <!-- Row 5: ×10ˣ, 7, 8, 9, ÷ -->
-            <button class="dummy">×10ˣ</button>
+            <!-- Row 3: skip, skip, skip, skip, ÷ -->
+            <button class="skip"></button>
+            <button class="skip"></button>
+            <button class="skip"></button>
+            <button class="skip"></button>
+            <button id="btn-div" class="blue">÷</button>
+
+            <!-- Row 4: skip, skip, ( (2nd:%), ), × -->
+            <button class="skip"></button>
+            <button class="skip"></button>
+            <button id="btn-paren-open" class="dummy"><span class="second-fn">%</span>(</button>
+            <button class="dummy">)</button>
+            <button id="btn-mul" class="blue">×</button>
+
+            <!-- Row 5: x² (2nd:√), 7, 8, 9, − -->
+            <button id="btn-x2" class="black"><span class="second-fn">√</span>x²</button>
             <button id="btn-7" class="white">7</button>
             <button id="btn-8" class="white">8</button>
             <button id="btn-9" class="white">9</button>
-            <button id="btn-div" class="blue">÷</button>
+            <button id="btn-sub" class="blue">−</button>
 
-            <!-- Row 6: table, 4, 5, 6, × -->
-            <button class="dummy">table</button>
+            <!-- Row 6: skip, 4, 5, 6, + -->
+            <button class="skip"></button>
             <button id="btn-4" class="white">4</button>
             <button id="btn-5" class="white">5</button>
             <button id="btn-6" class="white">6</button>
-            <button id="btn-mul" class="blue">×</button>
+            <button id="btn-add" class="blue">+</button>
 
-            <!-- Row 7: f<>d, 1, 2, 3, - -->
-            <button id="btn-toggle" class="black">f◄►d</button>
+            <!-- Row 7: skip, 1, 2, 3, ◄► -->
+            <button class="skip"></button>
             <button id="btn-1" class="white">1</button>
             <button id="btn-2" class="white">2</button>
             <button id="btn-3" class="white">3</button>
-            <button id="btn-sub" class="blue">−</button>
+            <button id="btn-arrows" class="black">◄►</button>
 
-            <!-- Row 8: (-), 0, ., arrows, + -->
-            <button id="btn-neg" class="black"><span class="second-fn">ans</span>(−)</button>
+            <!-- Row 8: on, 0, ., (−), enter -->
+            <button class="dummy">on</button>
             <button id="btn-0" class="white">0</button>
             <button id="btn-dot" class="white">.</button>
-            <button id="btn-arrows" class="black">◄ ►</button>
-            <button id="btn-add" class="blue">+</button>
-
-            <!-- Row 9: reset, on, ◄, ►, enter -->
-            <button class="dummy">reset</button>
-            <button class="dummy">on</button>
-            <button id="btn-left" class="black">◄</button>
-            <button id="btn-right" class="black">►</button>
+            <button id="btn-neg" class="black">(−)</button>
             <button id="btn-enter" class="green">enter</button>
         </div>
 
@@ -363,16 +360,28 @@
                     }
                     break;
                 case 'nd': startFraction(); break;
-                case 'toggle': toggleFractionDecimal(); break;
+                case 'table':
+                    if (state.secondMode) {
+                        toggleFractionDecimal();
+                        state.secondMode = false;
+                        updateSecondButton();
+                    }
+                    break;
+                case 'paren-open':
+                    if (state.secondMode) {
+                        applyPercent();
+                        state.secondMode = false;
+                        updateSecondButton();
+                    }
+                    break;
                 case '2nd':
                     state.secondMode = !state.secondMode;
                     updateSecondButton();
                     break;
-                case 'left': case 'right': case 'arrows':
-                    handleArrow(key);
+                case 'arrows':
+                    handleArrow();
                     break;
                 case 'pi': inputPi(); break;
-                case 'percent': applyPercent(); break;
                 case 'neg': toggleNegative(); break;
             }
             
@@ -467,9 +476,9 @@
             state.fractionPart = 'numerator';
         }
 
-        function handleArrow(direction) {
+        function handleArrow() {
             if (state.enteringFraction) {
-                state.fractionPart = (direction === 'left') ? 'numerator' : 'denominator';
+                state.fractionPart = (state.fractionPart === 'numerator') ? 'denominator' : 'numerator';
             }
         }
 

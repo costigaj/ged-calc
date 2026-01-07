@@ -67,7 +67,7 @@
 
         .remote-container {
             width: 100%;
-            max-width: 320px;
+            max-width: 300px;
         }
 
         .keypad {
@@ -78,10 +78,10 @@
         }
 
         button {
-            height: 42px;
+            height: 44px;
             border-radius: 5px;
             border: none;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 600;
             cursor: pointer;
             position: relative;
@@ -95,7 +95,7 @@
             top: -14px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 8px;
+            font-size: 9px;
             color: #f4d03f;
             font-weight: normal;
             white-space: nowrap;
@@ -105,6 +105,11 @@
             background: var(--btn-gray);
             color: #666;
             opacity: 0.4;
+            pointer-events: none;
+        }
+
+        button.skip {
+            visibility: hidden;
             pointer-events: none;
         }
 
@@ -132,13 +137,7 @@
             box-shadow: 0 2px 0 #1b5e20, 0 3px 6px rgba(0,0,0,0.3);
         }
 
-        button.clear-btn {
-            background: linear-gradient(180deg, #c0392b, #a93226);
-            color: #fff;
-            box-shadow: 0 2px 0 #7b241c, 0 3px 6px rgba(0,0,0,0.3);
-        }
-
-        button:active:not(.dummy) {
+        button:active:not(.dummy):not(.skip) {
             box-shadow: 0 1px 0 #111, 0 2px 4px rgba(0,0,0,0.2);
             transform: translateY(2px) scale(0.98);
         }
@@ -166,67 +165,60 @@
 
     <div class="remote-container">
         <div class="keypad">
-            <!-- Row 1: 2nd, mode, del, clear, off -->
+            <!-- Row 1: 2nd, skip, skip, table (2nd:f<>d), skip -->
             <button class="green" onclick="send('2nd')">2nd</button>
-            <button class="dummy">mode</button>
-            <button class="dummy">del</button>
-            <button class="clear-btn" onclick="send('clear')">clear</button>
-            <button class="dummy">off</button>
+            <button class="skip"></button>
+            <button class="skip"></button>
+            <button class="black" onclick="send('table')"><span class="second-fn">f◄►d</span>table</button>
+            <button class="skip"></button>
 
-            <!-- Row 2: n/d, x^-1, sin, cos, tan -->
-            <button class="black" onclick="send('nd')"><span class="second-fn">Un/d</span>n/d</button>
-            <button class="dummy"><span class="second-fn">x√</span>x⁻¹</button>
-            <button class="dummy"><span class="second-fn">sin⁻¹</span>sin</button>
-            <button class="dummy"><span class="second-fn">cos⁻¹</span>cos</button>
-            <button class="dummy"><span class="second-fn">tan⁻¹</span>tan</button>
-
-            <!-- Row 3: x², log, ln, (, ) -->
-            <button class="black" onclick="send('x2')"><span class="second-fn">√</span>x²</button>
-            <button class="dummy"><span class="second-fn">10ˣ</span>log</button>
-            <button class="dummy"><span class="second-fn">eˣ</span>ln</button>
-            <button class="dummy">(</button>
-            <button class="dummy">)</button>
-
-            <!-- Row 4: ^, %, π, data, stat -->
-            <button class="dummy">^</button>
-            <button class="black" onclick="send('percent')">%</button>
+            <!-- Row 2: π, n/d, skip, skip, clear -->
             <button class="black" onclick="send('pi')">π</button>
-            <button class="dummy">data</button>
-            <button class="dummy">stat</button>
+            <button class="black" onclick="send('nd')">n/d</button>
+            <button class="skip"></button>
+            <button class="skip"></button>
+            <button class="black" onclick="send('clear')">clear</button>
 
-            <!-- Row 5: ×10ˣ, 7, 8, 9, ÷ -->
-            <button class="dummy">×10ˣ</button>
+            <!-- Row 3: skip, skip, skip, skip, ÷ -->
+            <button class="skip"></button>
+            <button class="skip"></button>
+            <button class="skip"></button>
+            <button class="skip"></button>
+            <button class="blue" onclick="send('div')">÷</button>
+
+            <!-- Row 4: skip, skip, ( (2nd:%), ), × -->
+            <button class="skip"></button>
+            <button class="skip"></button>
+            <button class="dummy" onclick="send('paren-open')"><span class="second-fn">%</span>(</button>
+            <button class="dummy">)</button>
+            <button class="blue" onclick="send('mul')">×</button>
+
+            <!-- Row 5: x² (2nd:√), 7, 8, 9, − -->
+            <button class="black" onclick="send('x2')"><span class="second-fn">√</span>x²</button>
             <button class="white" onclick="send('7')">7</button>
             <button class="white" onclick="send('8')">8</button>
             <button class="white" onclick="send('9')">9</button>
-            <button class="blue" onclick="send('div')">÷</button>
+            <button class="blue" onclick="send('sub')">−</button>
 
-            <!-- Row 6: table, 4, 5, 6, × -->
-            <button class="dummy">table</button>
+            <!-- Row 6: skip, 4, 5, 6, + -->
+            <button class="skip"></button>
             <button class="white" onclick="send('4')">4</button>
             <button class="white" onclick="send('5')">5</button>
             <button class="white" onclick="send('6')">6</button>
-            <button class="blue" onclick="send('mul')">×</button>
+            <button class="blue" onclick="send('add')">+</button>
 
-            <!-- Row 7: f<>d, 1, 2, 3, - -->
-            <button class="black" onclick="send('toggle')">f◄►d</button>
+            <!-- Row 7: skip, 1, 2, 3, ◄► -->
+            <button class="skip"></button>
             <button class="white" onclick="send('1')">1</button>
             <button class="white" onclick="send('2')">2</button>
             <button class="white" onclick="send('3')">3</button>
-            <button class="blue" onclick="send('sub')">−</button>
+            <button class="black" onclick="send('arrows')">◄►</button>
 
-            <!-- Row 8: (-), 0, ., arrows, + -->
-            <button class="black" onclick="send('neg')"><span class="second-fn">ans</span>(−)</button>
+            <!-- Row 8: on, 0, ., (−), enter -->
+            <button class="dummy">on</button>
             <button class="white" onclick="send('0')">0</button>
             <button class="white" onclick="send('dot')">.</button>
-            <button class="black" onclick="send('arrows')">◄ ►</button>
-            <button class="blue" onclick="send('add')">+</button>
-
-            <!-- Row 9: reset, on, ◄, ►, enter -->
-            <button class="dummy">reset</button>
-            <button class="dummy">on</button>
-            <button class="black" onclick="send('left')">◄</button>
-            <button class="black" onclick="send('right')">►</button>
+            <button class="black" onclick="send('neg')">(−)</button>
             <button class="green" onclick="send('enter')">enter</button>
         </div>
     </div>
