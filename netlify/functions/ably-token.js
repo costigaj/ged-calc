@@ -15,7 +15,7 @@ exports.handler = async function(event, context) {
     if (!apiKey) {
         return {
             statusCode: 500,
-            body: JSON.stringify({ error: 'Ably API key not configured' })
+            body: JSON.stringify({ error: 'API key not found in environment' })
         };
     }
 
@@ -36,10 +36,13 @@ exports.handler = async function(event, context) {
             body: JSON.stringify(tokenRequest)
         };
     } catch (error) {
-        console.error('Error creating token:', error);
         return {
             statusCode: 500,
-            body: JSON.stringify({ error: 'Failed to generate token' })
+            body: JSON.stringify({ 
+                error: 'Failed to generate token',
+                message: error.message,
+                code: error.code
+            })
         };
     }
 };
