@@ -17,24 +17,16 @@
             --lcd-border: #8a9a7a;
             --text-dark: #1a1a1a;
             
-            /* TI-30XS Button Colors */
             --btn-black: #2a2a2a;
-            --btn-black-text: #ffffff;
             --btn-gray: #4a4a4a;
-            --btn-gray-text: #cccccc;
             --btn-blue: #1a5fb4;
-            --btn-blue-text: #ffffff;
             --btn-white: #e8e8e8;
-            --btn-white-text: #1a1a1a;
             --btn-green: #2e7d32;
-            --btn-green-text: #ffffff;
             
             --highlight: #ffff00;
         }
 
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             background: var(--bg);
@@ -49,52 +41,51 @@
 
         .calc-container {
             background: linear-gradient(145deg, #3d3d4a, var(--calc-body));
-            width: 420px;
-            padding: 25px;
-            border-radius: 20px;
-            border: 4px solid var(--calc-border);
+            width: 340px;
+            padding: 15px;
+            border-radius: 15px;
+            border: 3px solid var(--calc-border);
             box-shadow: 0 10px 40px rgba(0,0,0,0.5);
         }
 
         .calc-header {
             text-align: center;
             color: #888;
-            font-size: 12px;
-            margin-bottom: 10px;
-            letter-spacing: 2px;
+            font-size: 10px;
+            margin-bottom: 8px;
         }
 
         .brand {
-            font-size: 18px;
+            font-size: 14px;
             font-weight: bold;
             color: #aaa;
-            margin-bottom: 5px;
+            margin-bottom: 3px;
         }
 
         .screen-container {
             background: var(--lcd-bg);
-            min-height: 90px;
-            margin-bottom: 20px;
-            border: 3px solid var(--lcd-border);
-            border-radius: 8px;
-            padding: 10px 15px;
+            min-height: 80px;
+            margin-bottom: 15px;
+            border: 2px solid var(--lcd-border);
+            border-radius: 6px;
+            padding: 8px 12px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
         }
 
         .secondary-display {
-            font-size: 14px;
+            font-size: 12px;
             color: #555;
-            min-height: 18px;
+            min-height: 16px;
             text-align: right;
         }
 
         #display-area {
-            font-size: 32px;
+            font-size: 28px;
             color: var(--text-dark);
             text-align: right;
-            min-height: 45px;
+            min-height: 40px;
             display: flex;
             align-items: center;
             justify-content: flex-end;
@@ -103,105 +94,94 @@
         .keypad {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 8px;
+            gap: 4px;
+            row-gap: 20px;
         }
 
         button {
-            height: 44px;
-            border-radius: 6px;
+            height: 32px;
+            border-radius: 4px;
             border: none;
             font-weight: bold;
-            font-size: 13px;
+            font-size: 10px;
             cursor: default;
             transition: transform 0.1s, box-shadow 0.1s;
             position: relative;
-            text-shadow: 0 1px 1px rgba(0,0,0,0.3);
         }
 
-        /* Dummy buttons - grayed out */
-        button.dummy {
-            background: var(--btn-gray);
-            color: var(--btn-gray-text);
-            opacity: 0.5;
-        }
-
-        /* Live button styles by color */
-        button.black {
-            background: linear-gradient(180deg, #3a3a3a, var(--btn-black));
-            color: var(--btn-black-text);
-            box-shadow: 0 3px 0 #1a1a1a;
-        }
-
-        button.blue {
-            background: linear-gradient(180deg, #2a6fc4, var(--btn-blue));
-            color: var(--btn-blue-text);
-            box-shadow: 0 3px 0 #0d3d7a;
-        }
-
-        button.white {
-            background: linear-gradient(180deg, #f5f5f5, var(--btn-white));
-            color: var(--btn-white-text);
-            box-shadow: 0 3px 0 #aaa;
-            text-shadow: none;
-        }
-
-        button.green {
-            background: linear-gradient(180deg, #3e9d42, var(--btn-green));
-            color: var(--btn-green-text);
-            box-shadow: 0 3px 0 #1b5e20;
-        }
-
-        /* 2nd function label above buttons */
         button .second-fn {
             position: absolute;
-            top: -16px;
+            top: -15px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 9px;
+            font-size: 8px;
             color: #f4d03f;
             font-weight: normal;
             white-space: nowrap;
         }
 
-        /* Highlight animation for pressed buttons */
+        button.dummy {
+            background: var(--btn-gray);
+            color: #666;
+            opacity: 0.4;
+        }
+
+        button.black {
+            background: linear-gradient(180deg, #3a3a3a, var(--btn-black));
+            color: #fff;
+            box-shadow: 0 2px 0 #1a1a1a;
+        }
+
+        button.blue {
+            background: linear-gradient(180deg, #2a6fc4, var(--btn-blue));
+            color: #fff;
+            box-shadow: 0 2px 0 #0d3d7a;
+        }
+
+        button.white {
+            background: linear-gradient(180deg, #f5f5f5, var(--btn-white));
+            color: #1a1a1a;
+            box-shadow: 0 2px 0 #aaa;
+        }
+
+        button.green {
+            background: linear-gradient(180deg, #3e9d42, var(--btn-green));
+            color: #fff;
+            box-shadow: 0 2px 0 #1b5e20;
+        }
+
         button.highlight {
             background: var(--highlight) !important;
             color: #000 !important;
-            transform: scale(1.08);
-            box-shadow: 0 0 20px var(--highlight), 0 3px 0 #b8b800 !important;
-            text-shadow: none !important;
+            transform: scale(1.05);
+            box-shadow: 0 0 15px var(--highlight), 0 2px 0 #b8b800 !important;
         }
 
-        /* Status indicator */
         .status {
             text-align: center;
-            margin-top: 15px;
-            font-size: 11px;
+            margin-top: 12px;
+            font-size: 10px;
             color: #666;
         }
 
         .status .dot {
             display: inline-block;
-            width: 8px;
-            height: 8px;
+            width: 6px;
+            height: 6px;
             border-radius: 50%;
             background: #666;
-            margin-right: 5px;
+            margin-right: 4px;
         }
 
         .status.connected .dot {
             background: #4caf50;
-            box-shadow: 0 0 6px #4caf50;
+            box-shadow: 0 0 4px #4caf50;
         }
 
-        /* Fraction display styling */
-        .MathJax {
-            font-size: 28px !important;
-        }
+        .MathJax { font-size: 24px !important; }
     </style>
 </head>
 <body>
-
     <div class="calc-container">
         <div class="calc-header">
             <div class="brand">TEXAS INSTRUMENTS</div>
@@ -214,53 +194,67 @@
         </div>
 
         <div class="keypad">
-            <!-- Row 1 -->
-            <button id="btn-2nd" class="green"><span class="second-fn"></span>2nd</button>
+            <!-- Row 1: 2nd, mode, del, clear, off -->
+            <button id="btn-2nd" class="green">2nd</button>
             <button class="dummy">mode</button>
             <button class="dummy">del</button>
             <button id="btn-clear" class="black">clear</button>
-            <button class="dummy">on</button>
+            <button class="dummy">off</button>
 
-            <!-- Row 2 -->
-            <button class="dummy">yˣ</button>
+            <!-- Row 2: n/d, x^-1, sin, cos, tan -->
+            <button id="btn-nd" class="black"><span class="second-fn">Un/d</span>n/d</button>
+            <button class="dummy"><span class="second-fn">x√</span>x⁻¹</button>
+            <button class="dummy"><span class="second-fn">sin⁻¹</span>sin</button>
+            <button class="dummy"><span class="second-fn">cos⁻¹</span>cos</button>
+            <button class="dummy"><span class="second-fn">tan⁻¹</span>tan</button>
+
+            <!-- Row 3: x², log, ln, (, ) -->
             <button id="btn-x2" class="black"><span class="second-fn">√</span>x²</button>
-            <button class="dummy">^</button>
-            <button class="dummy">^</button>
-            <button class="dummy">log</button>
+            <button class="dummy"><span class="second-fn">10ˣ</span>log</button>
+            <button class="dummy"><span class="second-fn">eˣ</span>ln</button>
+            <button class="dummy">(</button>
+            <button class="dummy">)</button>
 
-            <!-- Row 3 -->
-            <button id="btn-nd" class="black"><span class="second-fn">un/d</span>n/d</button>
-            <button class="dummy">sin</button>
-            <button class="dummy">cos</button>
-            <button class="dummy">tan</button>
+            <!-- Row 4: ^, %, π, data, stat -->
+            <button class="dummy">^</button>
+            <button id="btn-percent" class="black">%</button>
             <button id="btn-pi" class="black">π</button>
+            <button class="dummy">data</button>
+            <button class="dummy">stat</button>
 
-            <!-- Row 4: Numbers 7-8-9, divide, dummy -->
+            <!-- Row 5: ×10ˣ, 7, 8, 9, ÷ -->
+            <button class="dummy">×10ˣ</button>
             <button id="btn-7" class="white">7</button>
             <button id="btn-8" class="white">8</button>
             <button id="btn-9" class="white">9</button>
             <button id="btn-div" class="blue">÷</button>
-            <button id="btn-percent" class="black">%</button>
 
-            <!-- Row 5: Numbers 4-5-6, multiply, arrow -->
+            <!-- Row 6: table, 4, 5, 6, × -->
+            <button class="dummy">table</button>
             <button id="btn-4" class="white">4</button>
             <button id="btn-5" class="white">5</button>
             <button id="btn-6" class="white">6</button>
             <button id="btn-mul" class="blue">×</button>
-            <button id="btn-left" class="black">◀</button>
 
-            <!-- Row 6: Numbers 1-2-3, subtract, arrow -->
+            <!-- Row 7: f<>d, 1, 2, 3, - -->
+            <button id="btn-toggle" class="black">f◄►d</button>
             <button id="btn-1" class="white">1</button>
             <button id="btn-2" class="white">2</button>
             <button id="btn-3" class="white">3</button>
             <button id="btn-sub" class="blue">−</button>
-            <button id="btn-right" class="black">▶</button>
 
-            <!-- Row 7: 0, dot, toggle, add, enter -->
+            <!-- Row 8: (-), 0, ., arrows, + -->
+            <button id="btn-neg" class="black"><span class="second-fn">ans</span>(−)</button>
             <button id="btn-0" class="white">0</button>
             <button id="btn-dot" class="white">.</button>
-            <button id="btn-toggle" class="black"><span class="second-fn"></span>f◄►d</button>
+            <button id="btn-arrows" class="black">◄ ►</button>
             <button id="btn-add" class="blue">+</button>
+
+            <!-- Row 9: reset, on, ◄, ►, enter -->
+            <button class="dummy">reset</button>
+            <button class="dummy">on</button>
+            <button id="btn-left" class="black">◄</button>
+            <button id="btn-right" class="black">►</button>
             <button id="btn-enter" class="green">enter</button>
         </div>
 
@@ -270,86 +264,57 @@
     </div>
 
     <script>
-        // ===== CALCULATOR STATE =====
         const state = {
             currentInput: '0',
             expression: '',
             lastResult: null,
             secondMode: false,
-            // Fraction state: when entering a fraction
             enteringFraction: false,
             fractionNumerator: '',
             fractionDenominator: '',
-            fractionPart: 'numerator', // 'numerator' or 'denominator'
-            // Display mode for results
+            fractionPart: 'numerator',
             displayAsFraction: true,
-            // Pending operations (for sqrt where you enter number after)
-            pendingOperation: null // 'sqrt' or null
+            pendingOperation: null
         };
 
-        // ===== FRACTION MATH UTILITIES =====
         function gcd(a, b) {
             a = Math.abs(Math.round(a));
             b = Math.abs(Math.round(b));
-            while (b) {
-                [a, b] = [b, a % b];
-            }
+            while (b) { [a, b] = [b, a % b]; }
             return a;
         }
 
         function decimalToFraction(decimal, tolerance = 1e-9) {
-            if (Number.isInteger(decimal)) {
-                return { num: decimal, den: 1 };
-            }
-            
+            if (Number.isInteger(decimal)) return { num: decimal, den: 1 };
             let sign = decimal < 0 ? -1 : 1;
             decimal = Math.abs(decimal);
-            
-            let h1 = 1, h2 = 0;
-            let k1 = 0, k2 = 1;
-            let b = decimal;
-            
+            let h1 = 1, h2 = 0, k1 = 0, k2 = 1, b = decimal;
             do {
                 let a = Math.floor(b);
-                let aux = h1;
-                h1 = a * h1 + h2;
-                h2 = aux;
-                aux = k1;
-                k1 = a * k1 + k2;
-                k2 = aux;
+                let aux = h1; h1 = a * h1 + h2; h2 = aux;
+                aux = k1; k1 = a * k1 + k2; k2 = aux;
                 b = 1 / (b - a);
             } while (Math.abs(decimal - h1 / k1) > decimal * tolerance && k1 < 10000);
-            
             return { num: sign * h1, den: k1 };
         }
 
-        function simplifyFraction(num, den) {
-            const g = gcd(num, den);
-            return { num: num / g, den: den / g };
-        }
-
-        // ===== DISPLAY FUNCTIONS =====
         function updateDisplay() {
             const displayArea = document.getElementById('display-area');
             const exprDisplay = document.getElementById('expression-display');
             
-            // Show expression in secondary display (with 2nd indicator if active)
             let secondIndicator = state.secondMode ? '2nd ' : '';
             exprDisplay.textContent = secondIndicator + state.expression;
             
             let displayText;
             
             if (state.pendingOperation === 'sqrt') {
-                // Show square root with number under radical
                 const num = state.currentInput || '\\square';
                 displayText = `\\(\\sqrt{${num}}\\)`;
             } else if (state.enteringFraction) {
-                // Show fraction being entered
                 const num = state.fractionNumerator || '?';
                 const den = state.fractionDenominator || '?';
                 displayText = `\\(\\frac{${num}}{${den}}\\)`;
             } else if (state.lastResult !== null && state.currentInput === '') {
-                // Show result
                 if (state.displayAsFraction && !Number.isInteger(state.lastResult)) {
                     const frac = decimalToFraction(state.lastResult);
                     if (frac.den === 1) {
@@ -358,31 +323,22 @@
                         displayText = `\\(\\frac{${frac.num}}{${frac.den}}\\)`;
                     }
                 } else {
-                    // Format decimal nicely
                     let numStr = state.lastResult.toString();
-                    if (numStr.length > 10) {
-                        numStr = state.lastResult.toPrecision(8);
-                    }
+                    if (numStr.length > 10) numStr = state.lastResult.toPrecision(8);
                     displayText = `\\(${numStr}\\)`;
                 }
             } else {
-                // Show current input
                 displayText = `\\(${state.currentInput || '0'}\\)`;
             }
             
             displayArea.innerHTML = displayText;
-            
-            // Re-render MathJax
             if (window.MathJax && MathJax.typesetPromise) {
                 MathJax.typesetPromise([displayArea]).catch(err => console.log('MathJax error:', err));
             }
         }
 
-        // ===== CALCULATOR OPERATIONS =====
         function handleKey(key) {
             console.log('Key received:', key, 'Second mode:', state.secondMode);
-            
-            // Highlight the button
             highlightButton(key);
             
             switch(key) {
@@ -390,69 +346,44 @@
                 case '5': case '6': case '7': case '8': case '9':
                     inputDigit(key);
                     break;
-                case 'dot':
-                    inputDecimal();
-                    break;
-                case 'add':
-                    inputOperator('+');
-                    break;
-                case 'sub':
-                    inputOperator('-');
-                    break;
-                case 'mul':
-                    inputOperator('×');
-                    break;
-                case 'div':
-                    inputOperator('÷');
-                    break;
-                case 'enter':
-                    calculate();
-                    break;
-                case 'clear':
-                    clearAll();
-                    break;
+                case 'dot': inputDecimal(); break;
+                case 'add': inputOperator('+'); break;
+                case 'sub': inputOperator('-'); break;
+                case 'mul': inputOperator('×'); break;
+                case 'div': inputOperator('÷'); break;
+                case 'enter': calculate(); break;
+                case 'clear': clearAll(); break;
                 case 'x2':
-                    // x² button: primary = square, 2nd = square root
                     if (state.secondMode) {
                         startSquareRoot();
                         state.secondMode = false;
+                        updateSecondButton();
                     } else {
                         squareNumber();
                     }
                     break;
-                case 'nd':
-                    startFraction();
-                    break;
-                case 'toggle':
-                    toggleFractionDecimal();
-                    break;
+                case 'nd': startFraction(); break;
+                case 'toggle': toggleFractionDecimal(); break;
                 case '2nd':
                     state.secondMode = !state.secondMode;
-                    // Update 2nd button visual state
-                    const btn2nd = document.getElementById('btn-2nd');
-                    if (btn2nd) {
-                        if (state.secondMode) {
-                            btn2nd.style.boxShadow = '0 0 10px #f4d03f, 0 3px 0 #1b5e20';
-                        } else {
-                            btn2nd.style.boxShadow = '';
-                        }
-                    }
+                    updateSecondButton();
                     break;
-                case 'left':
-                case 'right':
-                case 'up':
-                case 'down':
+                case 'left': case 'right': case 'arrows':
                     handleArrow(key);
                     break;
-                case 'pi':
-                    inputPi();
-                    break;
-                case 'percent':
-                    applyPercent();
-                    break;
+                case 'pi': inputPi(); break;
+                case 'percent': applyPercent(); break;
+                case 'neg': toggleNegative(); break;
             }
             
             updateDisplay();
+        }
+
+        function updateSecondButton() {
+            const btn2nd = document.getElementById('btn-2nd');
+            if (btn2nd) {
+                btn2nd.style.boxShadow = state.secondMode ? '0 0 10px #f4d03f, 0 2px 0 #1b5e20' : '';
+            }
         }
 
         function inputDigit(digit) {
@@ -474,7 +405,6 @@
 
         function inputDecimal() {
             if (state.enteringFraction) return;
-            
             if (state.lastResult !== null) {
                 state.currentInput = '0.';
                 state.lastResult = null;
@@ -483,11 +413,22 @@
             }
         }
 
-        function inputOperator(op) {
+        function toggleNegative() {
             if (state.enteringFraction) {
-                finishFraction();
+                if (state.fractionPart === 'numerator' && state.fractionNumerator) {
+                    state.fractionNumerator = state.fractionNumerator.startsWith('-') 
+                        ? state.fractionNumerator.substring(1) 
+                        : '-' + state.fractionNumerator;
+                }
+            } else if (state.currentInput && state.currentInput !== '0') {
+                state.currentInput = state.currentInput.startsWith('-') 
+                    ? state.currentInput.substring(1) 
+                    : '-' + state.currentInput;
             }
-            
+        }
+
+        function inputOperator(op) {
+            if (state.enteringFraction) finishFraction();
             if (state.lastResult !== null) {
                 state.expression = state.lastResult + ' ' + op + ' ';
                 state.lastResult = null;
@@ -499,10 +440,8 @@
 
         function startFraction() {
             if (state.enteringFraction && state.fractionPart === 'numerator') {
-                // Move to denominator
                 state.fractionPart = 'denominator';
             } else if (!state.enteringFraction) {
-                // Start new fraction
                 state.enteringFraction = true;
                 state.fractionNumerator = state.currentInput !== '0' ? state.currentInput : '';
                 state.fractionDenominator = '';
@@ -514,16 +453,13 @@
 
         function finishFraction() {
             if (!state.enteringFraction) return;
-            
             const num = parseFloat(state.fractionNumerator) || 0;
             const den = parseFloat(state.fractionDenominator) || 1;
-            
             if (den === 0) {
                 state.currentInput = 'Error';
                 state.enteringFraction = false;
                 return;
             }
-            
             state.currentInput = (num / den).toString();
             state.enteringFraction = false;
             state.fractionNumerator = '';
@@ -533,20 +469,13 @@
 
         function handleArrow(direction) {
             if (state.enteringFraction) {
-                if (direction === 'up' || direction === 'left') {
-                    state.fractionPart = 'numerator';
-                } else if (direction === 'down' || direction === 'right') {
-                    state.fractionPart = 'denominator';
-                }
+                state.fractionPart = (direction === 'left') ? 'numerator' : 'denominator';
             }
         }
 
         function calculate() {
-            if (state.enteringFraction) {
-                finishFraction();
-            }
+            if (state.enteringFraction) finishFraction();
             
-            // Handle pending square root
             if (state.pendingOperation === 'sqrt') {
                 let value = parseFloat(state.currentInput) || 0;
                 if (value < 0) {
@@ -563,10 +492,8 @@
             }
             
             let expr = state.expression + state.currentInput;
-            
             if (!expr.trim()) return;
             
-            // Convert display operators to JS operators
             expr = expr.replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-');
             
             try {
@@ -596,13 +523,10 @@
             state.fractionPart = 'numerator';
             state.displayAsFraction = true;
             state.pendingOperation = null;
-            // Reset 2nd button visual
-            const btn2nd = document.getElementById('btn-2nd');
-            if (btn2nd) btn2nd.style.boxShadow = '';
+            updateSecondButton();
         }
 
         function startSquareRoot() {
-            // Set pending operation - user will enter number next, then press enter
             state.pendingOperation = 'sqrt';
             state.currentInput = '';
             state.lastResult = null;
@@ -610,17 +534,8 @@
         }
 
         function squareNumber() {
-            let value;
-            if (state.enteringFraction) {
-                finishFraction();
-            }
-            
-            if (state.lastResult !== null) {
-                value = state.lastResult;
-            } else {
-                value = parseFloat(state.currentInput) || 0;
-            }
-            
+            if (state.enteringFraction) finishFraction();
+            let value = state.lastResult !== null ? state.lastResult : (parseFloat(state.currentInput) || 0);
             state.lastResult = value * value;
             state.currentInput = '';
             state.expression = '';
@@ -628,7 +543,6 @@
 
         function toggleFractionDecimal() {
             state.displayAsFraction = !state.displayAsFraction;
-            // If we have a current input that's not a result, convert it
             if (state.lastResult === null && state.currentInput && state.currentInput !== '0') {
                 state.lastResult = parseFloat(state.currentInput);
                 state.currentInput = '';
@@ -649,38 +563,23 @@
         }
 
         function applyPercent() {
-            if (state.enteringFraction) {
-                finishFraction();
-            }
-            
-            let value;
-            if (state.lastResult !== null) {
-                value = state.lastResult;
-            } else {
-                value = parseFloat(state.currentInput) || 0;
-            }
-            
-            // Divide by 100 to convert to percent
+            if (state.enteringFraction) finishFraction();
+            let value = state.lastResult !== null ? state.lastResult : (parseFloat(state.currentInput) || 0);
             state.lastResult = value / 100;
             state.currentInput = '';
             state.expression = '';
         }
 
-        // ===== BUTTON HIGHLIGHTING =====
         function highlightButton(key) {
             const btn = document.getElementById(`btn-${key}`);
             if (btn) {
                 btn.classList.add('highlight');
-                setTimeout(() => {
-                    btn.classList.remove('highlight');
-                }, 750); // 0.75 seconds
+                setTimeout(() => btn.classList.remove('highlight'), 750);
             }
         }
 
-        // ===== ABLY CONNECTION =====
         window.onload = function() {
             updateDisplay();
-            
             const statusEl = document.getElementById('status');
             
             if (typeof Ably === 'undefined') {
@@ -701,10 +600,7 @@
                 statusEl.innerHTML = '<span class="dot"></span>Disconnected';
             });
 
-            channel.subscribe('keypress', (msg) => {
-                const key = msg.data.key;
-                handleKey(key);
-            });
+            channel.subscribe('keypress', (msg) => handleKey(msg.data.key));
         };
     </script>
 </body>

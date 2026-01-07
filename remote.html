@@ -2,22 +2,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TI-30XS Remote</title>
     
     <script src="https://cdn.ably.com/lib/ably.min-1.js"></script>
     
     <style>
         :root {
-            /* TI-30XS Button Colors */
             --btn-black: #2a2a2a;
             --btn-blue: #1a5fb4;
             --btn-white: #e8e8e8;
             --btn-green: #2e7d32;
             --btn-gray: #4a4a4a;
-            --btn-orange: #e65100;
-            
-            --highlight: #ffff00;
         }
 
         * {
@@ -40,21 +36,19 @@
 
         .header {
             text-align: center;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .header h1 {
-            font-size: 14px;
+            font-size: 12px;
             margin: 0;
             color: #888;
-            letter-spacing: 1px;
-            text-transform: uppercase;
         }
 
         .status {
-            font-size: 11px;
+            font-size: 10px;
             color: #666;
-            margin-top: 5px;
+            margin-top: 4px;
         }
 
         .status .dot {
@@ -73,115 +67,91 @@
 
         .remote-container {
             width: 100%;
-            max-width: 360px;
+            max-width: 320px;
         }
 
         .keypad {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 6px;
+            gap: 4px;
+            row-gap: 18px;
         }
 
         button {
-            height: 52px;
-            border-radius: 8px;
+            height: 42px;
+            border-radius: 5px;
             border: none;
-            font-size: 14px;
+            font-size: 11px;
             font-weight: 600;
             cursor: pointer;
             position: relative;
             transition: transform 0.1s, box-shadow 0.1s;
         }
 
-        button:active {
-            transform: scale(0.95);
-        }
+        button:active { transform: scale(0.95); }
 
-        /* Dummy buttons */
-        button.dummy {
-            background: var(--btn-gray);
-            color: #888;
-            opacity: 0.4;
-            pointer-events: none;
-        }
-
-        /* Live button styles */
-        button.black {
-            background: linear-gradient(180deg, #3a3a3a, var(--btn-black));
-            color: #fff;
-            box-shadow: 0 3px 0 #1a1a1a, 0 4px 8px rgba(0,0,0,0.3);
-        }
-
-        button.blue {
-            background: linear-gradient(180deg, #2a6fc4, var(--btn-blue));
-            color: #fff;
-            box-shadow: 0 3px 0 #0d3d7a, 0 4px 8px rgba(0,0,0,0.3);
-        }
-
-        button.white {
-            background: linear-gradient(180deg, #f5f5f5, var(--btn-white));
-            color: #1a1a1a;
-            box-shadow: 0 3px 0 #aaa, 0 4px 8px rgba(0,0,0,0.3);
-        }
-
-        button.green {
-            background: linear-gradient(180deg, #3e9d42, var(--btn-green));
-            color: #fff;
-            box-shadow: 0 3px 0 #1b5e20, 0 4px 8px rgba(0,0,0,0.3);
-        }
-
-        /* 2nd function labels */
         button .second-fn {
             position: absolute;
             top: -14px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 9px;
+            font-size: 8px;
             color: #f4d03f;
             font-weight: normal;
             white-space: nowrap;
         }
 
-        /* Section labels */
-        .section-label {
-            grid-column: span 5;
-            font-size: 10px;
-            color: #555;
-            text-align: center;
-            margin: 8px 0 2px 0;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        button.dummy {
+            background: var(--btn-gray);
+            color: #666;
+            opacity: 0.4;
+            pointer-events: none;
         }
 
-        /* Special buttons */
-        button.enter-btn {
+        button.black {
+            background: linear-gradient(180deg, #3a3a3a, var(--btn-black));
+            color: #fff;
+            box-shadow: 0 2px 0 #1a1a1a, 0 3px 6px rgba(0,0,0,0.3);
+        }
+
+        button.blue {
+            background: linear-gradient(180deg, #2a6fc4, var(--btn-blue));
+            color: #fff;
+            box-shadow: 0 2px 0 #0d3d7a, 0 3px 6px rgba(0,0,0,0.3);
+        }
+
+        button.white {
+            background: linear-gradient(180deg, #f5f5f5, var(--btn-white));
+            color: #1a1a1a;
+            box-shadow: 0 2px 0 #aaa, 0 3px 6px rgba(0,0,0,0.3);
+        }
+
+        button.green {
             background: linear-gradient(180deg, #3e9d42, var(--btn-green));
             color: #fff;
-            box-shadow: 0 3px 0 #1b5e20, 0 4px 8px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 0 #1b5e20, 0 3px 6px rgba(0,0,0,0.3);
         }
 
         button.clear-btn {
             background: linear-gradient(180deg, #c0392b, #a93226);
             color: #fff;
-            box-shadow: 0 3px 0 #7b241c, 0 4px 8px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 0 #7b241c, 0 3px 6px rgba(0,0,0,0.3);
         }
 
-        /* Press feedback */
         button:active:not(.dummy) {
             box-shadow: 0 1px 0 #111, 0 2px 4px rgba(0,0,0,0.2);
             transform: translateY(2px) scale(0.98);
         }
 
-        /* Flash effect for button press */
         button.flash {
             background: #ffff00 !important;
             color: #000 !important;
         }
 
         .footer {
-            margin-top: 15px;
+            margin-top: 12px;
             text-align: center;
-            font-size: 10px;
+            font-size: 9px;
             color: #444;
         }
     </style>
@@ -196,54 +166,68 @@
 
     <div class="remote-container">
         <div class="keypad">
-            <!-- Row 1: Control buttons -->
-            <button class="green" onclick="send('2nd')"><span class="second-fn"></span>2nd</button>
+            <!-- Row 1: 2nd, mode, del, clear, off -->
+            <button class="green" onclick="send('2nd')">2nd</button>
             <button class="dummy">mode</button>
             <button class="dummy">del</button>
             <button class="clear-btn" onclick="send('clear')">clear</button>
-            <button class="dummy">on</button>
+            <button class="dummy">off</button>
 
-            <!-- Row 2: Functions -->
-            <button class="dummy">yˣ</button>
+            <!-- Row 2: n/d, x^-1, sin, cos, tan -->
+            <button class="black" onclick="send('nd')"><span class="second-fn">Un/d</span>n/d</button>
+            <button class="dummy"><span class="second-fn">x√</span>x⁻¹</button>
+            <button class="dummy"><span class="second-fn">sin⁻¹</span>sin</button>
+            <button class="dummy"><span class="second-fn">cos⁻¹</span>cos</button>
+            <button class="dummy"><span class="second-fn">tan⁻¹</span>tan</button>
+
+            <!-- Row 3: x², log, ln, (, ) -->
             <button class="black" onclick="send('x2')"><span class="second-fn">√</span>x²</button>
-            <button class="dummy">^</button>
-            <button class="dummy">^</button>
-            <button class="dummy">log</button>
+            <button class="dummy"><span class="second-fn">10ˣ</span>log</button>
+            <button class="dummy"><span class="second-fn">eˣ</span>ln</button>
+            <button class="dummy">(</button>
+            <button class="dummy">)</button>
 
-            <!-- Row 3: More functions -->
-            <button class="black" onclick="send('nd')"><span class="second-fn">un/d</span>n/d</button>
-            <button class="dummy">sin</button>
-            <button class="dummy">cos</button>
-            <button class="dummy">tan</button>
+            <!-- Row 4: ^, %, π, data, stat -->
+            <button class="dummy">^</button>
+            <button class="black" onclick="send('percent')">%</button>
             <button class="black" onclick="send('pi')">π</button>
+            <button class="dummy">data</button>
+            <button class="dummy">stat</button>
 
-            <!-- Row 4: 7 8 9 ÷ -->
+            <!-- Row 5: ×10ˣ, 7, 8, 9, ÷ -->
+            <button class="dummy">×10ˣ</button>
             <button class="white" onclick="send('7')">7</button>
             <button class="white" onclick="send('8')">8</button>
             <button class="white" onclick="send('9')">9</button>
             <button class="blue" onclick="send('div')">÷</button>
-            <button class="black" onclick="send('percent')">%</button>
 
-            <!-- Row 5: 4 5 6 × -->
+            <!-- Row 6: table, 4, 5, 6, × -->
+            <button class="dummy">table</button>
             <button class="white" onclick="send('4')">4</button>
             <button class="white" onclick="send('5')">5</button>
             <button class="white" onclick="send('6')">6</button>
             <button class="blue" onclick="send('mul')">×</button>
-            <button class="black" onclick="send('left')">◀</button>
 
-            <!-- Row 6: 1 2 3 − -->
+            <!-- Row 7: f<>d, 1, 2, 3, - -->
+            <button class="black" onclick="send('toggle')">f◄►d</button>
             <button class="white" onclick="send('1')">1</button>
             <button class="white" onclick="send('2')">2</button>
             <button class="white" onclick="send('3')">3</button>
             <button class="blue" onclick="send('sub')">−</button>
-            <button class="black" onclick="send('right')">▶</button>
 
-            <!-- Row 7: 0 . toggle + enter -->
+            <!-- Row 8: (-), 0, ., arrows, + -->
+            <button class="black" onclick="send('neg')"><span class="second-fn">ans</span>(−)</button>
             <button class="white" onclick="send('0')">0</button>
             <button class="white" onclick="send('dot')">.</button>
-            <button class="black" onclick="send('toggle')">f◄►d</button>
+            <button class="black" onclick="send('arrows')">◄ ►</button>
             <button class="blue" onclick="send('add')">+</button>
-            <button class="enter-btn" onclick="send('enter')">enter</button>
+
+            <!-- Row 9: reset, on, ◄, ►, enter -->
+            <button class="dummy">reset</button>
+            <button class="dummy">on</button>
+            <button class="black" onclick="send('left')">◄</button>
+            <button class="black" onclick="send('right')">►</button>
+            <button class="green" onclick="send('enter')">enter</button>
         </div>
     </div>
 
@@ -257,20 +241,15 @@
         function send(key) {
             if (channel) {
                 channel.publish('keypress', { key: key });
-                
-                // Haptic feedback for mobile
                 if (window.navigator.vibrate) {
                     window.navigator.vibrate(15);
                 }
             }
             
-            // Flash the button that was pressed
             const btn = event.currentTarget;
             if (btn) {
                 btn.classList.add('flash');
-                setTimeout(() => {
-                    btn.classList.remove('flash');
-                }, 100); // 0.1 seconds
+                setTimeout(() => btn.classList.remove('flash'), 100);
             }
         }
 
